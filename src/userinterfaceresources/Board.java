@@ -66,7 +66,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     public void mouseMoved(MouseEvent e) {
         x = e.getX();
         y = e.getY();
-//        repaint();
+//        repaint(); 
     }
 
 }
