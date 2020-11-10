@@ -2,6 +2,7 @@
 package Controllers;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import javax.swing.JFrame;
 import userinterfaceresources.Board;
 
@@ -19,7 +20,32 @@ public class Main {
 //        frame.setSize(1000, 900);
 //        frame.setVisible(true);
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        makeMove("6050 ");//Haciendo un movimiento manual
         System.out.println(generaMovimientos());
+        makeMove("6444 ");
+        for(int x = 0; x < 8; x++){
+            System.out.println(Arrays.toString(tableroPrueba[x]));
+        }
+    }
+    //m??todo para generar un movimiento
+    public static void makeMove(String movimiento){
+        if(movimiento.charAt(4) != 'P'){//Si no es una coronación
+            //x1,y1,x2,y2,piezacapturada
+            
+            //Ponemos la pieza de la casilla de origen a la casilla final
+            tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
+            //La casilla de inicio ahora tiene estar vacia
+            tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
+        }else{
+            //column1,column2,piezacapturada,nuevapieza,P
+            
+            //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
+            tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= " ";
+            tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
+        }
+    }
+    
+    public static void undoMove(String movimiento){
         
     }
     
@@ -225,7 +251,7 @@ public class Main {
                        lista = lista + row + col + (row  + temp * j) + (col) + piezaAnterior;
                    }
                    
-                   tableroPrueba[row  + temp * j][col] = "T";
+                   tableroPrueba[row][col] = "T";
                    tableroPrueba[row  + temp * j][col] = piezaAnterior;
                    temp++;
                 }
@@ -501,14 +527,14 @@ public class Main {
 //        {" "," "," "," "," "," "," "," "},
 //    };
 
-       private static String tableroPrueba[][] = {
+       private static final String tableroPrueba[][] = {
         {"t", "a", "c", "d", "r", "a", "c", "t"},
         {"p", "p", "p", "p", "p", "p", "p", "p"},
         {" ", " ", " ", " ", " ", " ", " ", " "},
         {" ", " ", " ", " ", " ", " ", " ", " "},
         {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", "R", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
         {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", " ", "A", "C", "T"},
+        {"T", "C", "A", "D", "R", "A", "C", "T"},
     };
 }
