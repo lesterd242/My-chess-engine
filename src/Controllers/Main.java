@@ -1,34 +1,90 @@
 
 package Controllers;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import javax.swing.JFrame;
-import userinterfaceresources.Board;
+import org.apache.log4j.Logger;
+import utils.Utils;
 
 
 public class Main {
 
     static int posicionReyB = 0, posicionReyN;
-    
-    
+    static int profundidadGlobal = 4;
     
     public static void main(String[] args) {
+          Logger log = Logger.getLogger(Main.class);
+          
 //        Board board = new Board();
 //        JFrame frame = new JFrame();
 //        frame.add(board);
 //        frame.setSize(1000, 900);
 //        frame.setVisible(true);
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        makeMove("6050 ");//Haciendo un movimiento manual
         System.out.println(generaMovimientos());
-        makeMove("6444 ");
-        for(int x = 0; x < 8; x++){
-            System.out.println(Arrays.toString(tableroPrueba[x]));
+//        makeMove("1434 ");//Pruebas movimiento
+//        makeMove("7655 ");//Pruebas movimiento
+        Utils.imprimirTablero(tableroPrueba);
+        alphaBeta(profundidadGlobal, posicionReyB, posicionReyB, "6444 ", 0);
+    }
+    
+    public static String alphaBeta(int profundidad, int alpha, int beta, String move, int player){
+        //Formato de retorno 1234b######## (movimiento, pieza, puntuacion)
+        String lista = generaMovimientos();
+        if(profundidad == 0 || lista.length() == 0){
+            return move+(rating()*(player*2-1));//Retornamos si no existen más movimientos o si no hay movimientos disponibles
+        }
+        
+        player = 1-player;
+        
+        for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
+            makeMove(lista.substring(i, (i + 5)));//Obtenemos un movimiento
+            
+            giraTablero();
+            //Se llama recursivamente el metodo, enviando la profundidad menos uno, hasta que sea cero y el movimiento de la lista
+            String stringReturn = alphaBeta(profundidad - 1, alpha, beta, (lista.substring(i, (i + 5))), player);
+            int valor = Integer.valueOf(stringReturn.substring(5));
+            giraTablero();
+            undoMove(lista.substring(i, (i+5)));
+            if (player == 0) {
+                if(valor <= beta){
+                    beta = valor;
+                    if(profundidad == profundidadGlobal){
+                        move = stringReturn.substring(0, 5);
+                    }
+                }
+            } else {
+                if(valor > alpha){
+                    alpha = valor;
+                    if(profundidad == profundidadGlobal){
+                        move = stringReturn.substring(0, 5);
+                    }
+                }
+            }
+            if(alpha >= beta){
+                if(player == 0){
+                    return move + beta;
+                }else{
+                    return move + alpha;
+                }
+            }
+        }
+        if(player ==0){
+            return move + beta;
+        }else{
+            return move + alpha;
         }
     }
+    
+    
+    public static int rating(){
+        return 0;
+    } 
+    
+    public static void giraTablero(){
+    
+    }
+    
     //m??todo para generar un movimiento
-    public static void makeMove(String movimiento){
+    private static void makeMove(String movimiento){
         if(movimiento.charAt(4) != 'P'){//Si no es una coronación
             //x1,y1,x2,y2,piezacapturada
             
@@ -36,17 +92,37 @@ public class Main {
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
             //La casilla de inicio ahora tiene estar vacia
             tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
+            Utils.imprimirTablero(tableroPrueba);
         }else{
-            //column1,column2,piezacapturada,nuevapieza,P
+            //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
             
             //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
             tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= " ";
             tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
+            Utils.imprimirTablero(tableroPrueba);
         }
     }
     
-    public static void undoMove(String movimiento){
-        
+    private static void undoMove(String movimiento){
+           if(movimiento.charAt(4) != 'P'){//Si no es una coronación
+            //x1,y1,x2,y2,piezacapturada
+            
+            //Se devuelve la pieza a su antiguo lugar
+            tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
+            //La casilla a la que se mueve ahora la llenamos con la pieza capturada o el espacio vacio
+            tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
+            System.out.println("movimiento deshecho " + movimiento);
+            Utils.imprimirTablero(tableroPrueba);
+        }else{
+            //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
+            
+            //Se coloca el peon en la casilla desde la que corono y la pieza que capturo en el lugar a coronar, si es espacio en blanco se coloca eso
+            tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= "P";
+            tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
+            System.out.println("movimiento deshecho " + movimiento);
+            Utils.imprimirTablero(tableroPrueba);
+
+        }
     }
     
     private static String generaMovimientos(){
@@ -103,8 +179,6 @@ public class Main {
                 }   
             }    
             } catch (Exception e) {
-                
-                System.out.println("Error REY (" + j +") " + e.toString());
             }
         }
         
@@ -151,7 +225,6 @@ public class Main {
                             tableroPrueba[row + temp * j][col + temp * k] = piezaAnterior;
                         }
                     } catch (Exception e) {
-                        System.out.println("Error dama");
                     }
                 }
                 temp = 1;
@@ -195,7 +268,6 @@ public class Main {
                             tableroPrueba[row + temp * j][col + temp * k] = piezaAnterior;
                         }
                     } catch (Exception e) {
-                        System.err.println("Error Alfil");
                     }
                 temp = 1;
             }
@@ -238,7 +310,6 @@ public class Main {
                     tableroPrueba[row][col + temp * j] = piezaAnterior;
                 }
             } catch (Exception e) {
-                System.err.println("Error torre");     
             }
             temp = 1;
             
@@ -268,7 +339,6 @@ public class Main {
                     tableroPrueba[row + temp * j][col] = piezaAnterior;
                 }
             } catch (Exception e) {
-                System.err.println("Error torre");     
             }
             temp = 1;
         }
@@ -294,7 +364,6 @@ public class Main {
                         tableroPrueba[row + j][col + k * 2] = piezaAnterior;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error CABALLO");
                 }
                 
                 try {
@@ -308,7 +377,6 @@ public class Main {
                         tableroPrueba[row + j * 2][col + k] = piezaAnterior;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error CABALLO");
                 }
 
             }
@@ -337,7 +405,6 @@ public class Main {
                     tableroPrueba[row-1][col+j] = piezaAnterior;
                 }
             } catch (Exception e) {
-                System.out.println("Error peon " + e.getMessage());
             }
             
              try {
@@ -356,7 +423,6 @@ public class Main {
                     
                 }
             } catch (Exception e) {
-                System.out.println("Error peon " + e.getMessage());
             }
         }
         
@@ -410,9 +476,6 @@ public class Main {
         return lista;
         
     }
-            
-            
-            
     
     private static boolean reySeguro(){
         int temp = 1;
@@ -430,7 +493,6 @@ public class Main {
                         return false;
                     }
                 } catch (Exception e) {
-                    System.out.println("Exception running rey seguro " + e.getMessage());
                 }
                 temp = 1;
             }
@@ -517,13 +579,13 @@ public class Main {
     
 
 //     private static final String tableroPrueba[][] = {
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {"a"," "," "," "," "," "," "," "},
+//        {" "," "," "," "," ","c"," ","a"},
 //        {" "," "," "," "," "," ","P"," "},
-//        {"P"," "," "," "," "," "," ","P"},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //    };
 
