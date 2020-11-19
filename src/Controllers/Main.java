@@ -1,7 +1,7 @@
 
 package Controllers;
 
-import org.apache.log4j.Logger;
+import java.util.Scanner;
 import utils.Utils;
 
 
@@ -11,7 +11,6 @@ public class Main {
     static int profundidadGlobal = 4;
     
     public static void main(String[] args) {
-          Logger log = Logger.getLogger(Main.class);
           
 //        Board board = new Board();
 //        JFrame frame = new JFrame();
@@ -20,27 +19,33 @@ public class Main {
 //        frame.setVisible(true);
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         System.out.println(generaMovimientos());
-//        makeMove("1434 ");//Pruebas movimiento
-//        makeMove("7655 ");//Pruebas movimiento
-        Utils.imprimirTablero(tableroPrueba);
-        alphaBeta(profundidadGlobal, posicionReyB, posicionReyB, "6444 ", 0);
+        //Utils.imprimirTablero(tableroPrueba, 0, "");
+        System.out.println(alphaBeta(4, 1000000, -1000000, "", 0));
     }
-    
-    public static String alphaBeta(int profundidad, int alpha, int beta, String move, int player){
+    /*
+     *     
+     */
+    public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
         //Formato de retorno 1234b######## (movimiento, pieza, puntuacion)
-        String lista = generaMovimientos();
+        String lista = generaMovimientos();//Solo tempoalmente, borrar
         if(profundidad == 0 || lista.length() == 0){
-            return move+(rating()*(player*2-1));//Retornamos si no existen más movimientos o si no hay movimientos disponibles
+            return move+(rating());//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
         }
-        
+        //Temporal
+//        lista = "";
+//        System.out.print("How many numbers there are: ");
+//        Scanner sc = new Scanner(System.in);
+//        int temp = sc.nextInt();
+//        for (int i = 0; i < temp; i++) {
+//            lista += "1111b";
+//        }
+        //Temporal
         player = 1-player;
-        
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
             makeMove(lista.substring(i, (i + 5)));//Obtenemos un movimiento
-            
             giraTablero();
             //Se llama recursivamente el metodo, enviando la profundidad menos uno, hasta que sea cero y el movimiento de la lista
-            String stringReturn = alphaBeta(profundidad - 1, alpha, beta, (lista.substring(i, (i + 5))), player);
+            String stringReturn = alphaBeta(profundidad - 1, beta, alpha, (lista.substring(i, (i + 5))), player);
             int valor = Integer.valueOf(stringReturn.substring(5));
             giraTablero();
             undoMove(lista.substring(i, (i+5)));
@@ -67,7 +72,7 @@ public class Main {
                 }
             }
         }
-        if(player ==0){
+        if(player == 0){
             return move + beta;
         }else{
             return move + alpha;
@@ -76,7 +81,9 @@ public class Main {
     
     
     public static int rating(){
-        return 0;
+        System.out.print("What is the score: ");
+        Scanner sc = new Scanner(System.in);
+        return sc.nextInt();
     } 
     
     public static void giraTablero(){
@@ -92,14 +99,14 @@ public class Main {
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
             //La casilla de inicio ahora tiene estar vacia
             tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
-            Utils.imprimirTablero(tableroPrueba);
+            Utils.imprimirTablero(tableroPrueba, 0, movimiento);
         }else{
             //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
             
             //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
             tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= " ";
             tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
-            Utils.imprimirTablero(tableroPrueba);
+            Utils.imprimirTablero(tableroPrueba, 0, movimiento);
         }
     }
     
@@ -111,21 +118,21 @@ public class Main {
             tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
             //La casilla a la que se mueve ahora la llenamos con la pieza capturada o el espacio vacio
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
-            System.out.println("movimiento deshecho " + movimiento);
-            Utils.imprimirTablero(tableroPrueba);
+            Utils.imprimirTablero(tableroPrueba, 1, movimiento);
         }else{
             //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
             
             //Se coloca el peon en la casilla desde la que corono y la pieza que capturo en el lugar a coronar, si es espacio en blanco se coloca eso
             tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= "P";
             tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
-            System.out.println("movimiento deshecho " + movimiento);
-            Utils.imprimirTablero(tableroPrueba);
+            Utils.imprimirTablero(tableroPrueba, 1, movimiento);
 
         }
     }
     
     private static String generaMovimientos(){
+        long init, fin;
+        init = System.currentTimeMillis();
         String lista = "";
         for(int x = 0; x <64; x++){
             switch(tableroPrueba[x/8][x%8]){
@@ -148,6 +155,8 @@ public class Main {
                     lista += movimientosPeon(x);
             }
         }
+        fin = System.currentTimeMillis();
+        System.out.println("Tiempo en generar movimientos " + (fin - init) + " ms.");
         return lista;
     }
     
@@ -578,25 +587,25 @@ public class Main {
     }
     
 
-//     private static final String tableroPrueba[][] = {
-//        {" "," "," "," "," ","c"," ","a"},
-//        {" "," "," "," "," "," ","P"," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//    };
-
-       private static final String tableroPrueba[][] = {
-        {"t", "a", "c", "d", "r", "a", "c", "t"},
-        {"p", "p", "p", "p", "p", "p", "p", "p"},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", "R", "A", "C", "T"},
+     private static final String tableroPrueba[][] = {
+        {" "," "," "," "," "," "," "," "},
+        {" ","P"," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {"R"," "," "," "," "," "," "," "},
     };
+
+//       private static final String tableroPrueba[][] = {
+//        {"t", "a", "c", "d", "r", "a", "c", "t"},
+//        {"p", "p", "p", "p", "p", "p", "p", "p"},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {"P", "P", "P", "P", "P", "P", "P", "P"},
+//        {"T", "C", "A", "D", "R", "A", "C", "T"},
+//    };
 }
