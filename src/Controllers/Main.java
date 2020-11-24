@@ -81,13 +81,51 @@ public class Main {
     
     
     public static int rating(){
-        System.out.print("What is the score: ");
-        Scanner sc = new Scanner(System.in);
-        return sc.nextInt();
+//        System.out.print("What is the score: ");
+//        Scanner sc = new Scanner(System.in);
+//        return sc.nextInt();
+        return 10;
     } 
     
     public static void giraTablero(){
-    
+        String temp;
+        int row, col;
+        /*
+         * Se cambia la posicion de cada una de las piezas, como si el tablero 
+         * girara 360 grados sobre su propio eje, la primera vez que se
+         * invoque este metodo será el turno de las negras y después de las blancas y 
+         * así sucesivamente.
+         */
+        for (int i = 0; i < 32; i++) {
+            row = i/8;
+            col = i%8;
+            //Primero se convierte a lowwer case o upper case y se guarda ese valor
+            if(Character.isUpperCase(tableroPrueba[row][col].charAt(0))){
+                temp = tableroPrueba[row][col].toLowerCase();
+            } else{
+                temp = tableroPrueba[row][col].toUpperCase();
+            }
+            
+            Utils.imprimirTablero(tableroPrueba, 4, "");
+            
+            //Colocamos el valor de la parte inferior en la parte superior 
+            if(Character.isUpperCase(tableroPrueba[7-row][7-col].charAt(0))){
+                tableroPrueba[row][col] = tableroPrueba[7-row][7-col].toLowerCase();
+            } else{
+                tableroPrueba[row][col] = tableroPrueba[7-row][7-col].toUpperCase();
+            }
+            
+            /*
+             * El valor que se guarda de la parte superior se guarda en la parte
+             * inferior
+             */
+            tableroPrueba[7-row][7-col] = temp;
+        }
+        
+        int reyTemp = posicionReyB;
+        posicionReyB = 63 - posicionReyN;
+        posicionReyN=63-reyTemp;
+        System.exit(0);//Solo temporal 
     }
     
     //m??todo para generar un movimiento
@@ -156,7 +194,7 @@ public class Main {
             }
         }
         fin = System.currentTimeMillis();
-        System.out.println("Tiempo en generar movimientos " + (fin - init) + " ms.");
+        //System.out.println("Tiempo en generar movimientos " + (fin - init) + " ms.");
         return lista;
     }
     
@@ -302,7 +340,7 @@ public class Main {
                        lista = lista + row + col + row + (col + temp * j) + piezaAnterior;
                    }
                    
-                   tableroPrueba[row][col + temp * j] = "T";
+                   tableroPrueba[row][col] = "T";
                    tableroPrueba[row][col + temp * j] = piezaAnterior;
                    temp++;
                 }
@@ -587,25 +625,25 @@ public class Main {
     }
     
 
-     private static final String tableroPrueba[][] = {
-        {" "," "," "," "," "," "," "," "},
-        {" ","P"," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {"R"," "," "," "," "," "," "," "},
-    };
-
-//       private static final String tableroPrueba[][] = {
-//        {"t", "a", "c", "d", "r", "a", "c", "t"},
-//        {"p", "p", "p", "p", "p", "p", "p", "p"},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {"P", "P", "P", "P", "P", "P", "P", "P"},
-//        {"T", "C", "A", "D", "R", "A", "C", "T"},
+//     private static final String tableroPrueba[][] = {
+//        {" "," "," "," ","t"," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," ","R"," "," "," "," "},
+//        {" "," "," "," "," "," ","r"," "},
+//        {" "," "," "," "," "," "," "," "},
 //    };
+
+       private static final String tableroPrueba[][] = {
+        {"t", "a", "c", "d", "r", "a", "c", "t"},
+        {"p", "p", "p", "p", "p", "p", "p", "p"},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {"P", "P", "P", "P", "P", "P", "P", "P"},
+        {"T", "C", "A", "D", "R", "A", "C", "T"},
+    };
 }
