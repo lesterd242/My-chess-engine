@@ -7,10 +7,21 @@ import utils.Utils;
 
 public class Main {
 
-    static int posicionReyB = 0, posicionReyN;
-    static int profundidadGlobal = 4;
+    private static int posicionReyB, posicionReyN;
+    private static int profundidadGlobal = 2;
     
     public static void main(String[] args) {
+        
+        Utils.imprimirTablero(tableroPrueba, 5, "");
+        
+        //Obtenemos la posicion de los reyes al principio
+        while(!"R".equals(tableroPrueba[posicionReyB/8][posicionReyB%8])){
+            posicionReyB++;
+        }
+        
+        while (!"r".equals(tableroPrueba[posicionReyN/8][posicionReyN%8])) {
+            posicionReyN++;
+        }
           
 //        Board board = new Board();
 //        JFrame frame = new JFrame();
@@ -25,7 +36,7 @@ public class Main {
     /*
      *     
      */
-    public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
+    private static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
         //Formato de retorno 1234b######## (movimiento, pieza, puntuacion)
         String lista = generaMovimientos();//Solo tempoalmente, borrar
         if(profundidad == 0 || lista.length() == 0){
@@ -80,14 +91,14 @@ public class Main {
     }
     
     
-    public static int rating(){
+    private static int rating(){
 //        System.out.print("What is the score: ");
 //        Scanner sc = new Scanner(System.in);
 //        return sc.nextInt();
         return 10;
     } 
     
-    public static void giraTablero(){
+    private static void giraTablero(){
         String temp;
         int row, col;
         /*
@@ -106,8 +117,6 @@ public class Main {
                 temp = tableroPrueba[row][col].toUpperCase();
             }
             
-            Utils.imprimirTablero(tableroPrueba, 4, "");
-            
             //Colocamos el valor de la parte inferior en la parte superior 
             if(Character.isUpperCase(tableroPrueba[7-row][7-col].charAt(0))){
                 tableroPrueba[row][col] = tableroPrueba[7-row][7-col].toLowerCase();
@@ -122,10 +131,11 @@ public class Main {
             tableroPrueba[7-row][7-col] = temp;
         }
         
+        Utils.imprimirTablero(tableroPrueba, 2, "");
+        
         int reyTemp = posicionReyB;
         posicionReyB = 63 - posicionReyN;
         posicionReyN=63-reyTemp;
-        System.exit(0);//Solo temporal 
     }
     
     //m??todo para generar un movimiento
@@ -137,6 +147,12 @@ public class Main {
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
             //La casilla de inicio ahora tiene estar vacia
             tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
+            
+            if("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))])){
+                //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la 
+                posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
+            }
+            
             Utils.imprimirTablero(tableroPrueba, 0, movimiento);
         }else{
             //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
@@ -156,6 +172,12 @@ public class Main {
             tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
             //La casilla a la que se mueve ahora la llenamos con la pieza capturada o el espacio vacio
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
+            
+            //Actualizamos la posición del rey
+            if("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))])){
+                //Multiplicamos 8 por el numero de la fila y después sumamos la columna
+                posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
+            }
             Utils.imprimirTablero(tableroPrueba, 1, movimiento);
         }else{
             //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
@@ -169,6 +191,9 @@ public class Main {
     }
     
     private static String generaMovimientos(){
+        
+        
+        
         long init, fin;
         init = System.currentTimeMillis();
         String lista = "";
