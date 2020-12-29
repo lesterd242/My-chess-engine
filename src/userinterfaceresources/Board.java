@@ -1,5 +1,6 @@
 package userinterfaceresources;
 
+import Controllers.Main;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -11,10 +12,10 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
 
-    int x = 10;
-    int y = 10;
+    int x = 5;
+    int y = 4;
     int squareSize = 64;
-
+    
     //Este método se manda a llamar con repaint
     @Override
     public void paintComponent(Graphics g) {
@@ -23,16 +24,83 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         for(int i = 0; i <64; i+=2){
+            
+            /*
+            *  Vamos incrementando las casillas, para construir primero una casilla clara y después una oscura.
+            *  primero se construye una casilla blanca en le esquina superior izquierda, después dependiendo 
+            *  de los valores en la segunda fila empezará una casilla negra y después una negra
+            */
+            //Casilla clara
             g.setColor(new Color(255, 200, 100));
-            //vamos incrementando las casillas, para construir primero una casilla clara y después una oscura 
             g.fillRect(10+(i%8+(i/8)%2)*squareSize, 10+(i/8)*squareSize, squareSize, squareSize);
+            //Casilla oscura
             g.setColor(new Color(150, 50, 30));
             g.fillRect(10+((i+1)%8 - ((i+1)/8)%2)*squareSize, 10+((i+1)/8)*squareSize, squareSize, squareSize);
         }
         
-       
-        Image img = new ImageIcon("chess.png").getImage();
-        g.drawImage(img, x, y, x + 400, y + 200, 0, 0, 1000, 500, this);
+        Image piezas;
+        piezas = new ImageIcon("chess.png").getImage();
+        
+        for (int i = 0; i < 64; i++) {
+            int k = -1 , j = k;
+
+            switch (Main.tableroPrueba[i / 8][i % 8]) {
+                case "p":
+                    j = 5;
+                    k = 1;
+                    break;
+                case "P":
+                    j = 5;
+                    k = 0;
+                    break;
+                case "t":
+                    j = 4;
+                    k = 1;
+                    break;
+                case "T":
+                    j = 4;
+                    k = 0;
+                    break;
+                case "c":
+                    j = 3;
+                    k = 1;
+                    break;
+                case "C":
+                    j = 3;
+                    k = 0;
+                    break;
+                case "a":
+                    j = 2;
+                    k = 1;
+                    break;
+                case "A":
+                    j = 2;
+                    k = 0;
+                    break;
+                case "d":
+                    j = 1;
+                    k = 1;
+                    break;
+                case "D":
+                    j = 1;
+                    k = 0;
+                    break;
+                case "r":
+                    j = 0;
+                    k = 1;
+                    break;
+                case "R":
+                    j = 0;
+                    k = 0;
+                    break;
+            }
+            
+            //Obtenemos 
+            if(j != -1 && k != -1){
+                g.drawImage(piezas, ((i%8) * squareSize) + 10, ((i/8) * squareSize) + 10, ((i%8+1) * squareSize) + 10, ((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
+            }
+        }
+        
     }
 
     @Override
