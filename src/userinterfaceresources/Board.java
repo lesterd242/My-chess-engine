@@ -12,8 +12,7 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
 
-    int x = 5;
-    int y = 4;
+    int mouseX, mouseY, newMouseX, newMouseY;
     int squareSize = 64;
     
     //Este método se manda a llamar con repaint
@@ -109,10 +108,36 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     @Override
     public void mousePressed(MouseEvent e) {
+        //Si se hace un click dentro del tablero
+        if(e.getX() < (8 * squareSize) + 10 && e.getY() < (8 * squareSize) + 10){
+            mouseX = e.getX();
+            mouseY = e.getY();
+            repaint();
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if(e.getX() < (8 * squareSize) + 10 && e.getY() < (8 * squareSize) + 10){
+            newMouseX = e.getX();
+            newMouseY = e.getY();
+            
+            if(e.getButton() == MouseEvent.BUTTON1){
+                String dragMove = ""; 
+                //Si es un movimiento de peon y coronación
+                if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
+                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize]+"QP";
+                } else{ 
+                    dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
+                }
+                
+                String movimientosPosibles = Main.generaMovimientos();
+                if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
+                    Main.makeMove(dragMove);
+                }
+            }
+            repaint();
+        }
     }
 
     @Override
@@ -125,16 +150,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        x = e.getX();
-        y = e.getY();
-        repaint();
+
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        x = e.getX();
-        y = e.getY();
-//        repaint();
+
     }
 
 }

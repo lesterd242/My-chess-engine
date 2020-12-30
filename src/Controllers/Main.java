@@ -2,6 +2,8 @@
 package Controllers;
 
 import java.util.Scanner;
+import javax.swing.JFrame;
+import userinterfaceresources.Board;
 import utils.Utils;
 
 
@@ -23,15 +25,18 @@ public class Main {
             posicionReyN++;
         }
           
-//        Board board = new Board();
-//        JFrame frame = new JFrame();
-//        frame.add(board);
-//        frame.setSize(1000, 900);
-//        frame.setVisible(true);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        System.out.println(generaMovimientos());
+        Board board = new Board();
+        JFrame frame = new JFrame();
+        frame.add(board);
+        frame.setSize(1000, 900);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//      makeMove("6050 ");
+        makeMove("6141 ");
+        makeMove("1434 ");
         //Utils.imprimirTablero(tableroPrueba, 0, "");
-        System.out.println(alphaBeta(4, 1000000, -1000000, "", 0));
+        //System.out.println(alphaBeta(4, 1000000, -1000000, "", 0));
+
     }
     /*
      *     
@@ -139,7 +144,7 @@ public class Main {
     }
     
     //m??todo para generar un movimiento
-    private static void makeMove(String movimiento){
+    public static void makeMove(String movimiento){
         if(movimiento.charAt(4) != 'P'){//Si no es una coronación
             //x1,y1,x2,y2,piezacapturada
             
@@ -190,7 +195,7 @@ public class Main {
         }
     }
     
-    private static String generaMovimientos(){
+    public static String generaMovimientos(){
         
         
         
@@ -661,7 +666,7 @@ public class Main {
 //        {" "," "," "," "," "," "," "," "},
 //    };
 
-       private static final String tableroPrueba[][] = {
+       public static final String tableroPrueba[][] = {
         {"t", "a", "c", "d", "r", "a", "c", "t"},
         {"p", "p", "p", "p", "p", "p", "p", "p"},
         {" ", " ", " ", " ", " ", " ", " ", " "},
