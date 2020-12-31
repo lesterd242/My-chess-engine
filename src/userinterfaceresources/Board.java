@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -22,6 +23,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         this.setBackground(Color.LIGHT_GRAY);
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        System.out.println("****REPAINT*****");
         for(int i = 0; i <64; i+=2){
             
             /*
@@ -126,7 +128,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 String dragMove = ""; 
                 //Si es un movimiento de peon y coronación
                 if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
-                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize]+"QP";
+                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
                 } else{ 
                     dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
                 }
@@ -134,9 +136,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 String movimientosPosibles = Main.generaMovimientos();
                 if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
                     Main.makeMove(dragMove);
+                    Main.giraTablero();
+                    Main.makeMove(Main.alphaBeta(Main.profundidadGlobal, 1000, -1000, "", 0));
+                    Main.giraTablero();
+                    repaint();
                 }
             }
-            repaint();
         }
     }
 
@@ -157,5 +162,45 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     public void mouseMoved(MouseEvent e) {
 
     }
+    
+    
+    /*Aleatorio
+     @Override
+    public void mouseReleased(MouseEvent e) {
+        if(e.getX() < (8 * squareSize) + 10 && e.getY() < (8 * squareSize) + 10){
+            newMouseX = e.getX();
+            newMouseY = e.getY();
+            
+            if(e.getButton() == MouseEvent.BUTTON1){
+                String dragMove = ""; 
+                //Si es un movimiento de peon y coronación
+                if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
+                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
+                } else{ 
+                    dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
+                }
+                
+                String movimientosPosibles = Main.generaMovimientos();
+                if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
+                    Main.makeMove(dragMove);
+                    
+                    Main.giraTablero();
+                    movimientosPosibles = Main.generaMovimientos();
+                    int longitud = (movimientosPosibles.length()/5);
+                    Random rnd = new Random();
+                    int indice = rnd.nextInt(longitud);
+                    while(indice % 5 != 0){
+                        indice = rnd.nextInt(longitud);
+                    }
+                    String movimientoRespuesta = movimientosPosibles.substring(indice*5, (indice*5)+5);
+                    Main.makeMove(movimientoRespuesta);
+                    Main.giraTablero();
+                }
+            }
+            repaint();
+        }
+    }
+    */
+    
 
 }
