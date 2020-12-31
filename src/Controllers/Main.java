@@ -1,8 +1,10 @@
 
 package Controllers;
 
+import evaluations.Rating;
 import java.util.Scanner;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import userinterfaceresources.Board;
 import utils.Utils;
 
@@ -10,12 +12,10 @@ import utils.Utils;
 public class Main {
 
     private static int posicionReyB, posicionReyN;
-    private static int profundidadGlobal = 2;
+    private static int humanAsWhite = -1;
+    public static int profundidadGlobal = 2;
     
-    public static void main(String[] args) {
-        
-        Utils.imprimirTablero(tableroPrueba, 5, "");
-        
+    public static void main(String[] args) {        
         //Obtenemos la posicion de los reyes al principio
         while(!"R".equals(tableroPrueba[posicionReyB/8][posicionReyB%8])){
             posicionReyB++;
@@ -28,12 +28,20 @@ public class Main {
         Board board = new Board();
         JFrame frame = new JFrame();
         frame.add(board);
-        frame.setSize(1000, 900);
+        frame.setSize(800, 900);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//      makeMove("6050 ");
-        makeMove("6141 ");
-        makeMove("1434 ");
+        frame.setLocation(1200, 1000);
+
+        Object option[] = {"Computer", "Human"};
+        humanAsWhite = JOptionPane.showOptionDialog(frame, "Elige color", "Inicio", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, option, option[1]);
+        
+        if(humanAsWhite == 0){
+            makeMove(alphaBeta(profundidadGlobal, 1000, -1000, "", 0));
+            giraTablero();
+            frame.repaint();
+        }
+        
         //Utils.imprimirTablero(tableroPrueba, 0, "");
         //System.out.println(alphaBeta(4, 1000000, -1000000, "", 0));
 
@@ -41,21 +49,13 @@ public class Main {
     /*
      *     
      */
-    private static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
+    public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
         //Formato de retorno 1234b######## (movimiento, pieza, puntuacion)
         String lista = generaMovimientos();//Solo tempoalmente, borrar
         if(profundidad == 0 || lista.length() == 0){
-            return move+(rating());//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
+            return move+(Rating.rating());//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
         }
-        //Temporal
-//        lista = "";
-//        System.out.print("How many numbers there are: ");
-//        Scanner sc = new Scanner(System.in);
-//        int temp = sc.nextInt();
-//        for (int i = 0; i < temp; i++) {
-//            lista += "1111b";
-//        }
-        //Temporal
+
         player = 1-player;
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
             makeMove(lista.substring(i, (i + 5)));//Obtenemos un movimiento
@@ -95,15 +95,7 @@ public class Main {
         }
     }
     
-    
-    private static int rating(){
-//        System.out.print("What is the score: ");
-//        Scanner sc = new Scanner(System.in);
-//        return sc.nextInt();
-        return 10;
-    } 
-    
-    private static void giraTablero(){
+    public static void giraTablero(){
         String temp;
         int row, col;
         /*
@@ -667,7 +659,7 @@ public class Main {
 //    };
 
        public static final String tableroPrueba[][] = {
-        {"t", "a", "c", "d", "r", "a", "c", "t"},
+        {"t", "c", "a", "d", "r", "a", "c", "t"},
         {"p", "p", "p", "p", "p", "p", "p", "p"},
         {" ", " ", " ", " ", " ", " ", " ", " "},
         {" ", " ", " ", " ", " ", " ", " ", " "},
