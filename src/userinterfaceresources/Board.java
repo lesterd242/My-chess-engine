@@ -33,10 +33,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             */
             //Casilla clara
             g.setColor(new Color(255, 200, 100));
-            g.fillRect(10+(i%8+(i/8)%2)*squareSize, 10+(i/8)*squareSize, squareSize, squareSize);
+            g.fillRect((i%8+(i/8)%2)*squareSize, (i/8)*squareSize, squareSize, squareSize);
             //Casilla oscura
             g.setColor(new Color(150, 50, 30));
-            g.fillRect(10+((i+1)%8 - ((i+1)/8)%2)*squareSize, 10+((i+1)/8)*squareSize, squareSize, squareSize);
+            g.fillRect(((i+1)%8 - ((i+1)/8)%2)*squareSize, ((i+1)/8)*squareSize, squareSize, squareSize);
         }
         
         Image piezas;
@@ -98,7 +98,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             
             //Obtenemos 
             if(j != -1 && k != -1){
-                g.drawImage(piezas, ((i%8) * squareSize) + 10, ((i/8) * squareSize) + 10, ((i%8+1) * squareSize) + 10, ((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
+                g.drawImage(piezas, ((i%8) * squareSize)  , ((i/8) * squareSize) , ((i%8+1) * squareSize) , ((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
             }
         }
         
@@ -111,7 +111,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     @Override
     public void mousePressed(MouseEvent e) {
         //Si se hace un click dentro del tablero
-        if(e.getX() < (8 * squareSize) + 10 && e.getY() < (8 * squareSize) + 10){
+        if(e.getX() < (8 * squareSize)  && e.getY() < (8 * squareSize) ){
             mouseX = e.getX();
             mouseY = e.getY();
             repaint();
@@ -120,7 +120,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(e.getX() < (8 * squareSize) + 10 && e.getY() < (8 * squareSize) + 10){
+        if(e.getX() < (8 * squareSize) && e.getY() < (8 * squareSize) ){
             newMouseX = e.getX();
             newMouseY = e.getY();
             
@@ -137,7 +137,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
                     Main.makeMove(dragMove);
                     Main.giraTablero();
-                    Main.makeMove(Main.alphaBeta(Main.profundidadGlobal, 1000, -1000, "", 0));
+                    Main.makeMove(Main.alphaBeta(Main.profundidadGlobal, 100000, -100000, "", 0));
                     Main.giraTablero();
                     repaint();
                 }

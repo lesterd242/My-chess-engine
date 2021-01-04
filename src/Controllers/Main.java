@@ -13,7 +13,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     private static int humanAsWhite = -1;
-    public static int profundidadGlobal = 2;
+    public static int profundidadGlobal = 1;
     
     public static void main(String[] args) {        
         //Obtenemos la posicion de los reyes al principio
@@ -31,13 +31,13 @@ public class Main {
         frame.setSize(800, 900);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocation(1200, 1000);
+        //frame.setLocation(1200, 1000);
 
         Object option[] = {"Computer", "Human"};
         humanAsWhite = JOptionPane.showOptionDialog(frame, "Elige color", "Inicio", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, option, option[1]);
         
         if(humanAsWhite == 0){
-            makeMove(alphaBeta(profundidadGlobal, 1000, -1000, "", 0));
+            makeMove(alphaBeta(profundidadGlobal, 100000, -100000, "", 0));
             giraTablero();
             frame.repaint();
         }
@@ -53,7 +53,7 @@ public class Main {
         //Formato de retorno 1234b######## (movimiento, pieza, puntuacion)
         String lista = generaMovimientos();//Solo tempoalmente, borrar
         if(profundidad == 0 || lista.length() == 0){
-            return move+(Rating.rating());//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
+            return move+(Rating.rating(lista.length(),  profundidad)+(player*2-1));//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
         }
 
         player = 1-player;
@@ -66,14 +66,14 @@ public class Main {
             giraTablero();
             undoMove(lista.substring(i, (i+5)));
             if (player == 0) {
-                if(valor <= beta){
+                if(valor <= beta){//Beta blanco
                     beta = valor;
                     if(profundidad == profundidadGlobal){
                         move = stringReturn.substring(0, 5);
                     }
                 }
             } else {
-                if(valor > alpha){
+                if(valor > alpha){//Alpha negro
                     alpha = valor;
                     if(profundidad == profundidadGlobal){
                         move = stringReturn.substring(0, 5);
@@ -181,7 +181,7 @@ public class Main {
             
             //Se coloca el peon en la casilla desde la que corono y la pieza que capturo en el lugar a coronar, si es espacio en blanco se coloca eso
             tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= "P";
-            tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
+            tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(2));
             Utils.imprimirTablero(tableroPrueba, 1, movimiento);
 
         }
@@ -647,25 +647,25 @@ public class Main {
     }
     
 
-//     private static final String tableroPrueba[][] = {
-//        {" "," "," "," ","t"," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," ","R"," "," "," "," "},
-//        {" "," "," "," "," "," ","r"," "},
-//        {" "," "," "," "," "," "," "," "},
-//    };
-
-       public static final String tableroPrueba[][] = {
-        {"t", "c", "a", "d", "r", "a", "c", "t"},
-        {"p", "p", "p", "p", "p", "p", "p", "p"},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", "R", "A", "C", "T"},
+     public static final String tableroPrueba[][] = {
+        {" ","t"," "," "," "," "," ","r"},
+        {" "," ","P"," "," "," "," "," "},
+        {" "," ","D"," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {"R"," "," "," "," "," "," "," "},
     };
+
+//       public static final String tableroPrueba[][] = {
+//        {"t", "c", "a", "d", "r", "a", "c", "t"},
+//        {"p", "p", "p", "p", "p", "p", "p", "p"},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {"P", "P", "P", "P", "P", "P", "P", "P"},
+//        {"T", "C", "A", "D", "R", "A", "C", "T"},
+//    };
 }
