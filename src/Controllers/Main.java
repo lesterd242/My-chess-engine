@@ -2,9 +2,15 @@
 package Controllers;
 
 import evaluations.Rating;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
 import java.util.Scanner;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import userinterfaceresources.Board;
 import utils.Utils;
 
@@ -12,8 +18,8 @@ import utils.Utils;
 public class Main {
 
     private static int posicionReyB, posicionReyN;
-    private static int humanAsWhite = -1;
-    public static int profundidadGlobal = 1;
+    public static int humanAsWhite = 1;
+    public static int profundidadGlobal = 7;
     
     public static void main(String[] args) {        
         //Obtenemos la posicion de los reyes al principio
@@ -25,25 +31,56 @@ public class Main {
             posicionReyN++;
         }
           
-        Board board = new Board();
+         Board board = new Board();
+        JButton button = new JButton("try alpha beta;");
+        JTextField campo = new JTextField(String.format("%20s", ""));
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String move = campo.getText();
+                move = move.trim();
+                if(move.length() == 4){
+                    move = move + " "; 
+                }
+                String list = generaMovimientos();
+                if(!list.contains(move)){
+                    return;
+                }
+                
+                Main.makeMove(move);
+                Main.giraTablero();
+                String moveDone = Main.alphaBeta(Main.profundidadGlobal, 10000000, -10000000, "", 0);
+                Main.makeMove(moveDone);
+                Main.giraTablero();
+                Utils.imprimirTablero(tableroPrueba, 3, "");
+                System.out.println("******Movimiento hecho " + moveDone);
+//                if(humanAsWhite == -1){
+//                    giraTablero();
+//                }
+//                
+//                if (!reySeguro()) {
+//                    System.out.println("******Juego terminado " + moveDone + ", mate******");
+//                    System.exit(0);
+//                } else {
+//                    System.out.println("******Movimiento hecho " + moveDone);
+//                }
+//                
+//                if(humanAsWhite == -1){
+//                    giraTablero();
+//                }
+            }
+
+        });
+        board.add(button);
+        board.add(campo, FlowLayout.LEFT);
+        
+        
         JFrame frame = new JFrame();
         frame.add(board);
-        frame.setSize(800, 900);
+        frame.setSize(700, 200);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setLocation(1200, 1000);
-
-        Object option[] = {"Computer", "Human"};
-        humanAsWhite = JOptionPane.showOptionDialog(frame, "Elige color", "Inicio", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, option, option[1]);
-        
-        if(humanAsWhite == 0){
-            makeMove(alphaBeta(profundidadGlobal, 100000, -100000, "", 0));
-            giraTablero();
-            frame.repaint();
-        }
-        
-        //Utils.imprimirTablero(tableroPrueba, 0, "");
-        //System.out.println(alphaBeta(4, 1000000, -1000000, "", 0));
+        frame.setLocation(1200, 1000);
 
     }
     /*
@@ -56,6 +93,7 @@ public class Main {
             return move+(Rating.rating(lista.length(),  profundidad)+(player*2-1));//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
         }
 
+        lista = mezclaLista(lista);
         player = 1-player;
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
             makeMove(lista.substring(i, (i + 5)));//Obtenemos un movimiento
@@ -66,6 +104,11 @@ public class Main {
             giraTablero();
             undoMove(lista.substring(i, (i+5)));
             if (player == 0) {
+                if(valor > 23000){
+                    beta = valor;
+                    //Utils.imprimirTablero(tableroPrueba, 89, null);
+                    return move + -(beta);
+                }
                 if(valor <= beta){//Beta blanco
                     beta = valor;
                     if(profundidad == profundidadGlobal){
@@ -127,8 +170,8 @@ public class Main {
              */
             tableroPrueba[7-row][7-col] = temp;
         }
+        //Utils.imprimirTablero(tableroPrueba, 2, "");
         
-        Utils.imprimirTablero(tableroPrueba, 2, "");
         
         int reyTemp = posicionReyB;
         posicionReyB = 63 - posicionReyN;
@@ -137,27 +180,29 @@ public class Main {
     
     //m??todo para generar un movimiento
     public static void makeMove(String movimiento){
-        if(movimiento.charAt(4) != 'P'){//Si no es una coronación
-            //x1,y1,x2,y2,piezacapturada
-            
-            //Ponemos la pieza de la casilla de origen a la casilla final
-            tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
-            //La casilla de inicio ahora tiene estar vacia
-            tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
-            
-            if("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))])){
-                //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la 
-                posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
+        try {
+            if (movimiento.charAt(4) != 'P') {//Si no es una coronación
+                //x1,y1,x2,y2,piezacapturada
+
+                //Ponemos la pieza de la casilla de origen a la casilla final
+                tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
+                //La casilla de inicio ahora tiene estar vacia
+                tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
+
+                if ("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))])) {
+                    //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la 
+                    posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
+                }
+
+            } else {
+                //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
+
+                //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
+                tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))] = " ";
+                tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
             }
-            
-            Utils.imprimirTablero(tableroPrueba, 0, movimiento);
-        }else{
-            //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
-            
-            //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
-            tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= " ";
-            tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
-            Utils.imprimirTablero(tableroPrueba, 0, movimiento);
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
     
@@ -175,16 +220,16 @@ public class Main {
                 //Multiplicamos 8 por el numero de la fila y después sumamos la columna
                 posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
             }
-            Utils.imprimirTablero(tableroPrueba, 1, movimiento);
         }else{
             //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
             
             //Se coloca el peon en la casilla desde la que corono y la pieza que capturo en el lugar a coronar, si es espacio en blanco se coloca eso
             tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= "P";
             tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(2));
-            Utils.imprimirTablero(tableroPrueba, 1, movimiento);
 
         }
+           
+        //Utils.imprimirTablero(tableroPrueba, 1, movimiento);
     }
     
     public static String generaMovimientos(){
@@ -426,6 +471,7 @@ public class Main {
                     if (Character.isLowerCase(tableroPrueba[row + j][col + k * 2].charAt(0)) || " ".equals(tableroPrueba[row + j][col + k * 2])) {
                         piezaAnterior = tableroPrueba[row + j][col + k * 2];
                         tableroPrueba[row][col] = " ";
+                        tableroPrueba[row + j] [col + k * 2] = "C";
                         if(reySeguro()){
                             lista = lista + row + col + (row + j) + (col + k * 2) + piezaAnterior;   
                         }
@@ -439,6 +485,7 @@ public class Main {
                     if (Character.isLowerCase(tableroPrueba[row + j * 2][col + k].charAt(0)) || " ".equals(tableroPrueba[row + j * 2][col + k])) {
                         piezaAnterior = tableroPrueba[row + j * 2] [col + k];
                         tableroPrueba[row][col] = " ";
+                        tableroPrueba[row + j * 2] [col + k] = "C";
                         if(reySeguro()){
                             lista = lista + row + col + (row + j * 2) + (col + k) + piezaAnterior;   
                         }
@@ -546,7 +593,7 @@ public class Main {
         
     }
     
-    private static boolean reySeguro(){
+    public static boolean reySeguro(){
         int temp = 1;
         //Este método se ejecuta en cada movimiento de piezas
         //Básicamente checa si el rey esta en jaque por cada movimiento de piezas en cada posicion temporal
@@ -558,7 +605,6 @@ public class Main {
                     }
                     //Como el alfil y una dama se mueven de manera similar (diagonales) podemos saber si esta en jaque por un alfil o por una dama
                     if("a".equals(tableroPrueba[posicionReyB/8+temp*j][posicionReyB%8+temp*k]) || "d".equals(tableroPrueba[posicionReyB/8+temp*j][posicionReyB%8+temp*k])){
-                        System.out.println("No es un movimiento valido");
                         return false;
                     }
                 } catch (Exception e) {
@@ -646,16 +692,68 @@ public class Main {
         return true;
     }
     
+    private static String mezclaLista(String lista) {
+        Random rnd = new Random();
+        //System.out.println("Imprimiendo lista a desordenar " + lista);
+        String nuevaLista = "";
+
+        if (lista != null && !lista.equals("")) {
+            if (lista.length() == 5) {
+                return lista;
+            }
+            int numeroJugadas = lista.length() / 5;
+            int nuevosIndices[] = new int[numeroJugadas];
+            String listaDividida[] = new String[numeroJugadas];
+            numeroJugadas = 0;
+            for (int i = 0; i < lista.length();) {
+                listaDividida[numeroJugadas] = lista.substring(i, i + 5);
+                numeroJugadas++;
+                i = i + 5;
+            }
+
+            numeroJugadas = lista.length() / 5;
+            int x = 1;
+            int indiceRnd;
+            boolean bandera;
+
+            while (x < numeroJugadas) {
+                bandera = true;
+                indiceRnd = rnd.nextInt(numeroJugadas);
+                for (int i = 0; i < numeroJugadas; i++) {
+                    if (indiceRnd == nuevosIndices[i]) {
+                        bandera = false;
+                        if (!bandera) {
+                            break;
+                        }
+                    }
+                }
+                if (bandera) {
+                    nuevosIndices[x - 1] = indiceRnd;
+                    x++;
+                }
+            }
+
+            for (int i = 0; i < numeroJugadas; i++) {
+                nuevaLista += listaDividida[nuevosIndices[i]];
+            }
+
+        } else {
+            return lista;
+        }
+
+        return nuevaLista;
+    }
+
 
      public static final String tableroPrueba[][] = {
-        {" ","t"," "," "," "," "," ","r"},
-        {" "," ","P"," "," "," "," "," "},
-        {" "," ","D"," "," "," "," "," "},
+        {" "," "," "," "," "," "," ","r"},
+        {" "," "," "," ","D","D"," "," "},
+        {" "," "," "," "," "," ","p"," "},
         {" "," "," "," "," "," "," "," "},
         {" "," "," "," "," "," "," "," "},
         {" "," "," "," "," "," "," "," "},
         {" "," "," "," "," "," "," "," "},
-        {"R"," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," ","R"},
     };
 
 //       public static final String tableroPrueba[][] = {
