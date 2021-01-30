@@ -19,7 +19,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 7;
+    public static int profundidadGlobal = 1;
     
     public static void main(String[] args) {        
         //Obtenemos la posicion de los reyes al principio
@@ -31,56 +31,13 @@ public class Main {
             posicionReyN++;
         }
           
-         Board board = new Board();
-        JButton button = new JButton("try alpha beta;");
-        JTextField campo = new JTextField(String.format("%20s", ""));
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String move = campo.getText();
-                move = move.trim();
-                if(move.length() == 4){
-                    move = move + " "; 
-                }
-                String list = generaMovimientos();
-                if(!list.contains(move)){
-                    return;
-                }
-                
-                Main.makeMove(move);
-                Main.giraTablero();
-                String moveDone = Main.alphaBeta(Main.profundidadGlobal, 10000000, -10000000, "", 0);
-                Main.makeMove(moveDone);
-                Main.giraTablero();
-                Utils.imprimirTablero(tableroPrueba, 3, "");
-                System.out.println("******Movimiento hecho " + moveDone);
-//                if(humanAsWhite == -1){
-//                    giraTablero();
-//                }
-//                
-//                if (!reySeguro()) {
-//                    System.out.println("******Juego terminado " + moveDone + ", mate******");
-//                    System.exit(0);
-//                } else {
-//                    System.out.println("******Movimiento hecho " + moveDone);
-//                }
-//                
-//                if(humanAsWhite == -1){
-//                    giraTablero();
-//                }
-            }
-
-        });
-        board.add(button);
-        board.add(campo, FlowLayout.LEFT);
-        
-        
+        Board board = new Board();
         JFrame frame = new JFrame();
         frame.add(board);
-        frame.setSize(700, 200);
+        frame.setSize(700, 800);
+        frame.setLocation(0, 0);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocation(1200, 1000);
 
     }
     /*
@@ -745,25 +702,25 @@ public class Main {
     }
 
 
-     public static final String tableroPrueba[][] = {
-        {" "," "," "," "," "," "," ","r"},
-        {" "," "," "," ","D","D"," "," "},
-        {" "," "," "," "," "," ","p"," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," ","R"},
-    };
-
-//       public static final String tableroPrueba[][] = {
-//        {"t", "c", "a", "d", "r", "a", "c", "t"},
-//        {"p", "p", "p", "p", "p", "p", "p", "p"},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {"P", "P", "P", "P", "P", "P", "P", "P"},
-//        {"T", "C", "A", "D", "R", "A", "C", "T"},
+//     public static final String tableroPrueba[][] = {
+//        {"t","D","t"," "," "," ","r"," "},
+//        {" "," "," "," "," ","p","p","p"},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," ","D"," "},
+//        {" "," "," "," "," "," ","T","R"},
 //    };
+
+       public static final String tableroPrueba[][] = {
+        {"t", "c", "a", "d", "r", "a", "c", "t"},
+        {"p", "p", "p", "p", "p", "p", "p", "p"},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {"P", "P", "P", "P", "P", "P", "P", "P"},
+        {"T", "C", "A", "D", "R", "A", "C", "T"},
+    };
 }
