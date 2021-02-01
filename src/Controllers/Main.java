@@ -2,6 +2,8 @@
 package Controllers;
 
 import evaluations.Rating;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,8 +11,11 @@ import java.util.Random;
 import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 import userinterfaceresources.Board;
 import utils.Utils;
 
@@ -18,8 +23,9 @@ import utils.Utils;
 public class Main {
 
     private static int posicionReyB, posicionReyN;
-    public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 1;
+    public static int humanAsWhite = 5;
+    public static int profundidadGlobal = 5;
+    private static JLabel labelStatus = new JLabel();
     
     public static void main(String[] args) {        
         //Obtenemos la posicion de los reyes al principio
@@ -31,10 +37,24 @@ public class Main {
             posicionReyN++;
         }
           
-        Board board = new Board();
+        
         JFrame frame = new JFrame();
-        frame.add(board);
-        frame.setSize(700, 800);
+        
+        Board board = new Board();
+        
+        JPanel leftPanel = new JPanel();
+        leftPanel.setBackground(Color.lightGray);
+        JLabel labelLeft = new JLabel(String.format("%50s", ""));
+        labelLeft.setForeground(Color.BLACK);
+        leftPanel.add(labelLeft);
+        
+        labelStatus.setText(" ");
+        labelStatus.setBorder(new TitledBorder("Estado del juego"));
+        
+        frame.add(leftPanel, BorderLayout.WEST);
+        frame.add(board, BorderLayout.CENTER);
+        frame.add(labelStatus, BorderLayout.SOUTH);
+        frame.setSize(1000, 800);
         frame.setLocation(0, 0);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -353,6 +373,7 @@ public class Main {
         int col = i%8;
         int temp = 1;
         String piezaAnterior;
+        Utils.imprimirTablero(tableroPrueba, 6, "");
         
         for(int j= -1; j<=1; j+=2){//Para las filas, -1 fila izquierda, 1 fila derecha
             try {
@@ -723,4 +744,9 @@ public class Main {
         {"P", "P", "P", "P", "P", "P", "P", "P"},
         {"T", "C", "A", "D", "R", "A", "C", "T"},
     };
+
+    public static JLabel getLabelStatus() {
+        return labelStatus;
+    }
+       
 }

@@ -5,6 +5,28 @@ import utils.Utils;
 
 public class Rating {
     
+    private static final int PAWNBOARD[][] = {
+        { 0,  0,  0,  0,  0,  0,  0,  0},
+        {50, 50, 50, 50, 50, 50, 50, 50},
+        {15, 15, 25, 40, 40, 20, 20, 20},
+        { 5, 10, 15, 30, 30, 10, 10, 10},
+        { 5,  0, 10, 20, 20,  5,  5,  5},
+        { 5, 15,  -5,  5,  5,-15, 10, 10},
+        {15, 15, 15,-10,-10, 15, 15, 10},
+        { 0,  0,  0,  0,  0,  0,  0,  0}
+    };
+    
+    private static final int KNIGHTBOARD[][] = {
+        {-15,-10,-10,-10,-10,-10,-10,-15},
+        {-10, -5, -5, -5, -5, -5, -5,-10},
+        {-10,  0, 15,  5,  5, 15,  0,-10},
+        {-10,  5,  5, 10, 10,  5,  5,-10},
+        {-10,  5,  5, 10, 10,  5,  5,-10},
+        {-10,  0, 15,  5,  5, 15,  0,-10},
+        {-10, -5, -5, -5, -5, -5, -5,-10},
+        {-15, -5,-10,-10,-10,-10,-10,-15}
+    };
+    
     public static int rating(int list, int depth){
         int counter = 0;
         counter += rateAttack();
@@ -15,8 +37,7 @@ public class Rating {
         Main.giraTablero();
         counter -= rateAttack();
         counter -= rateMaterial();
-        counter -= rateMoveability(list);
-        counter -= checkStaleMate(Main.generaMovimientos().length(), depth);
+        counter -= rateMoveability(Main.generaMovimientos().length());
         counter -= ratePositional();
         Main.giraTablero();
         return -(counter+depth*50);
@@ -50,8 +71,9 @@ public class Rating {
         
         return counter;
     }
+    
     private static int rateMoveability(int list) {
-        int counter = list;
+        int counter = list/5;
         return counter;
     }
     
@@ -70,6 +92,19 @@ public class Rating {
     }
     
     private static int ratePositional(){
-        return 0;
+        int counter = 0;
+        
+        for (int i = 0; i < 64; i++) {
+            switch(Main.tableroPrueba[i/8][i%8]){
+                case "P":
+                    counter += PAWNBOARD[i/8][i%8];
+                    break;
+                case "C":
+                    counter += KNIGHTBOARD[i/8][i%8];
+                break;
+            }
+        }
+        
+        return counter;
     }
 }

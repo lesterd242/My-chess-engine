@@ -13,8 +13,9 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
 
-    int mouseX, mouseY, newMouseX, newMouseY;
-    int squareSize = 64;
+    private int mouseX, mouseY, newMouseX, newMouseY;
+    private int squareSize = 64;
+    
     
     //Este método se manda a llamar con repaint
     @Override
@@ -136,7 +137,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
                     Main.makeMove(dragMove);
                     Main.giraTablero();
+                    Main.getLabelStatus().setText("\"Pensando\"...");
                     String moveDone = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+                    Main.getLabelStatus().setText("Movimiento hecho: " + moveDone);
                     Main.makeMove(moveDone);
                     Main.giraTablero();
                     
