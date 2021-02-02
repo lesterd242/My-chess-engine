@@ -109,10 +109,19 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             if(j != -1 && k != -1){
                 g.drawImage(piezas, 10+((i%8) * squareSize)  , 10+((i/8) * squareSize) , 10+((i%8+1) * squareSize) , 10+((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
             }
-            
+        }
+        utils.Utils.imprimirTablero(chessBoardAux, 3, "Uno");
+        utils.Utils.imprimirTablero(Main.tableroPrueba, 3, "Dos");
 
-            g.drawRoundRect(4*squareSize + 10 + 3,  4*squareSize + 10 + 3, squareSize - 6, squareSize - 6, 10, 10);
-
+       g.setColor(Color.BLACK);
+       for (int i=0;i<8;i++) {
+            for (int j=0;j<8;j++) {
+                if (!chessBoardAux[i][j].equals(Main.tableroPrueba[i][j])) {
+                    g.drawRoundRect(j*squareSize+10+3, i*squareSize+10+3, squareSize-6, squareSize-6, 10, 10);
+                    g.drawRoundRect(j*squareSize+10+4, i*squareSize+10+4, squareSize-8, squareSize-8, 10, 10);
+                    System.out.println("Diferentes");
+                }
+            }
         }
         
     }

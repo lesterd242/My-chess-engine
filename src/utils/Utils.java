@@ -16,6 +16,9 @@ public class Utils {
             case 2:
                 System.out.println("Se gira tablero");
                 break;
+            case 3:
+                System.out.println("DEBUG " + movimiento);
+                break;
         }
         
         for(int x = 0; x < 8; x++){

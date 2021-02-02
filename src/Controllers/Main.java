@@ -181,6 +181,7 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
+        //Utils.imprimirTablero(tableroPrueba, 0, movimiento);
     }
     
     private static void undoMove(String movimiento){
