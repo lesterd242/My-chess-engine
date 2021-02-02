@@ -23,8 +23,8 @@ import utils.Utils;
 public class Main {
 
     private static int posicionReyB, posicionReyN;
-    public static int humanAsWhite = 5;
-    public static int profundidadGlobal = 5;
+    public static int humanAsWhite = 1;
+    public static int profundidadGlobal = 1;
     private static JLabel labelStatus = new JLabel();
     
     public static void main(String[] args) {        
@@ -373,7 +373,6 @@ public class Main {
         int col = i%8;
         int temp = 1;
         String piezaAnterior;
-        Utils.imprimirTablero(tableroPrueba, 6, "");
         
         for(int j= -1; j<=1; j+=2){//Para las filas, -1 fila izquierda, 1 fila derecha
             try {

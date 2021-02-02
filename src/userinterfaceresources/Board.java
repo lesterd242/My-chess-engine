@@ -15,6 +15,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     private int mouseX, mouseY, newMouseX, newMouseY;
     private int squareSize = 64;
+    private static int mouseDrag[][][]=new int[8][8][2];
+    static String chessBoardAux[][]=new String[8][8];
+    private static boolean ANTIREPEAT = false;
     
     
     //Este método se manda a llamar con repaint
@@ -24,6 +27,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         this.setBackground(Color.LIGHT_GRAY);
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        
+        if(!ANTIREPEAT){
+            copyBoard();
+            ANTIREPEAT = true;
+        }
+        
         for(int i = 0; i <64; i+=2){
             
             /*
@@ -100,12 +109,17 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             if(j != -1 && k != -1){
                 g.drawImage(piezas, 10+((i%8) * squareSize)  , 10+((i/8) * squareSize) , 10+((i%8+1) * squareSize) , 10+((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
             }
+            
+
+            g.drawRoundRect(4*squareSize + 10 + 3,  4*squareSize + 10 + 3, squareSize - 6, squareSize - 6, 10, 10);
+
         }
         
     }
-
+    
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseDragged(MouseEvent e) {
+
     }
 
     @Override
@@ -114,7 +128,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(e.getX() < (8 * squareSize)+10  && e.getY() < (8 * squareSize)+10 ){
             mouseX = e.getX();
             mouseY = e.getY();
-            repaint();
         }
     }
 
@@ -132,22 +145,25 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 } else{ 
                     dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
                 }
-                
                 String movimientosPosibles = Main.generaMovimientos();
                 if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
                     Main.makeMove(dragMove);
+                    copyBoard();
                     Main.giraTablero();
                     Main.getLabelStatus().setText("\"Pensando\"...");
                     String moveDone = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
                     Main.getLabelStatus().setText("Movimiento hecho: " + moveDone);
                     Main.makeMove(moveDone);
                     Main.giraTablero();
-                    
-                    
-                    
                     repaint();
                 }
             }
+        }
+    }
+    
+    private static void copyBoard(){
+        for (int i=0;i<8;i++) {
+            System.arraycopy(Main.tableroPrueba[i], 0, chessBoardAux[i], 0, 8);
         }
     }
 
@@ -160,15 +176,14 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
     public void mouseMoved(MouseEvent e) {
 
     }
     
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
     
     /*Aleatorio
      @Override
