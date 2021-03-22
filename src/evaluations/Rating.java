@@ -53,16 +53,20 @@ public class Rating {
         {-10,  0,  5, 10, 10,  5,  0,-10},
         {-10,  5,  5, 10, 10,  5,  5,-10},
         {-10,  0, 20, 20, 20, 20,  0,-10},
-        {-10, 15, 15, 15, 15, 15, 15,-10},
-        {-10, 10,  0,  0,  0,  0, 10,-10},
+        {-10, 10, 15, 15, 15, 15, 10,-10},
+        {-10, 15,  0,  0,  0,  0, 15,-10},
         {  0,-10,-10,-10,-10,-10,-10,  0}};
     
     public static int rating(int list, int depth){
         int counter = 0;
+        /*
+         * Si viene de un nodo beta, entonces se giro el tablero para evaluar 
+         * desde la posición de las blancas.
+         */        
         counter += rateAttack();
         counter += rateMaterial();
-        counter += rateMoveability(list);
         counter += checkStaleMate(list, depth);
+        counter += rateMoveability(list);
         counter += ratePositional();
         Main.giraTablero();
         counter -= rateAttack();

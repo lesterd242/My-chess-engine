@@ -24,7 +24,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 1;
+    public static int profundidadGlobal = 5;
     private static JLabel labelStatus = new JLabel();
     
     public static void main(String[] args) {        
@@ -64,8 +64,8 @@ public class Main {
      *     
      */
     public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
-        //Formato de retorno 1234b######## (movimiento, pieza, puntuacion)
-        String lista = generaMovimientos();//Solo tempoalmente, borrar
+        //Formato de retorno 1234b#### (movimiento, pieza, puntuacion)
+        String lista = generaMovimientos();
         if(profundidad == 0 || lista.length() == 0){
             return move+(Rating.rating(lista.length(),  profundidad)+(player*2-1));//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
         }
@@ -86,14 +86,14 @@ public class Main {
                     //Utils.imprimirTablero(tableroPrueba, 89, null);
                     return move + -(beta);
                 }
-                if(valor <= beta){//Beta blanco
+                if(valor <= beta){//Beta negro
                     beta = valor;
                     if(profundidad == profundidadGlobal){
                         move = stringReturn.substring(0, 5);
                     }
                 }
-            } else {
-                if(valor > alpha){//Alpha negro
+            } else { 
+                if(valor > alpha){//Alpha blanco
                     alpha = valor;
                     if(profundidad == profundidadGlobal){
                         move = stringReturn.substring(0, 5);
@@ -181,7 +181,7 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-        //Utils.imprimirTablero(tableroPrueba, 0, movimiento);
+        Utils.imprimirTablero(tableroPrueba, 0, movimiento);
     }
     
     private static void undoMove(String movimiento){
@@ -207,7 +207,7 @@ public class Main {
 
         }
            
-        //Utils.imprimirTablero(tableroPrueba, 1, movimiento);
+        Utils.imprimirTablero(tableroPrueba, 1, movimiento);
     }
     
     public static String generaMovimientos(){
@@ -723,27 +723,27 @@ public class Main {
     }
 
 
-//     public static final String tableroPrueba[][] = {
-//        {"t","D","t"," "," "," ","r"," "},
-//        {" "," "," "," "," ","p","p","p"},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," ","D"," "},
-//        {" "," "," "," "," "," ","T","R"},
-//    };
-
-       public static final String tableroPrueba[][] = {
-        {"t", "c", "a", "d", "r", "a", "c", "t"},
-        {"p", "p", "p", "p", "p", "p", "p", "p"},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", "R", "A", "C", "T"},
+     public static final String tableroPrueba[][] = {
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," ","r"," "," "},
+        {"t"," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," ","R"},
     };
+
+//       public static final String tableroPrueba[][] = {
+//        {"t", "c", "a", "d", "r", "a", "c", "t"},
+//        {"p", "p", "p", "p", "p", "p", "p", "p"},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {"P", "P", "P", "P", "P", "P", "P", "P"},
+//        {"T", "C", "A", "D", "R", "A", "C", "T"},
+//    };
 
     public static JLabel getLabelStatus() {
         return labelStatus;

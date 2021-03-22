@@ -160,7 +160,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     copyBoard();
                     Main.giraTablero();
                     Main.getLabelStatus().setText("\"Pensando\"...");
-                    String moveDone = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+                    String moveDone = Main.alphaBeta(Main.profundidadGlobal, 10000000, -10000000, "", 0);
                     Main.getLabelStatus().setText("Movimiento hecho: " + moveDone);
                     Main.makeMove(moveDone);
                     Main.giraTablero();
