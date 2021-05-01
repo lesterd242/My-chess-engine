@@ -26,6 +26,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     int squareSize = 64;
     private static JLabel labelEstado;
     private static String movimientoFinal;
+    private static String chessBoardAux[][] = new String[8][8];
     
     //Este método se manda a llamar con repaint
     @Override
@@ -54,7 +55,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         
         for (int i = 0; i < 64; i++) {
             int k = -1 , j = k;
-
+            
             switch (Main.tableroPrueba[i / 8][i % 8]) {
                 case "p":
                     j = 5;
@@ -106,11 +107,24 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     break;
             }
             
-            //Obtenemos 
+            
+            //Pintamos la pieza en el lugar que le corresponde
             if(j != -1 && k != -1){
                 g.drawImage(piezas, 10+((i%8) * squareSize)  , 10+((i/8) * squareSize) , 10+((i%8+1) * squareSize) , 10+((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
             }
         }
+        
+       g.setColor(Color.BLACK);
+       for (int i=0;i<8;i++) {
+            for (int j=0;j<8;j++) {
+                if (!chessBoardAux[i][j].equals(Main.tableroPrueba[i][j])) {
+                    g.drawRoundRect(j*squareSize+10+3, i*squareSize+10+3, squareSize-6, squareSize-6, 10, 10);
+                    g.drawRoundRect(j*squareSize+10+4, i*squareSize+10+4, squareSize-8, squareSize-8, 10, 10);
+                    System.out.println("Diferentes");
+                }
+            }
+       }
+        
         
     }
 
@@ -133,7 +147,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(e.getX() < 10+(8 * squareSize) && e.getY() < 10+(8 * squareSize) ){
             newMouseX = e.getX();
             newMouseY = e.getY();
-            
+
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
                 //Si es un movimiento de peon y coronación
@@ -153,13 +167,14 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.add(new JLabel("Espere..."));
                     
                     Main.makeMove(dragMove);
+                    copyBoard();
                     Main.giraTablero();
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
                         protected Void doInBackground() throws Exception {
                             labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
-                            movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);     
+                            movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0); 
                             Main.makeMove(movimientoFinal);
                             return null;
                         }
@@ -179,6 +194,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     
                     Main.giraTablero();
                     repaint();
+                    
+                    
                 }
             }
         }
@@ -203,6 +220,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
     
     public static void main(String[] args) {
+        
         Main.inicializaReyes();
         JFrame frame = new JFrame();
         Board board = new Board();
@@ -214,5 +232,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         frame.setLocation(0, 0);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        copyBoard();
+    }
+    
+    
+    private static void copyBoard(){
+        for (int i=0;i<8;i++) {
+            System.arraycopy(Main.tableroPrueba[i], 0, chessBoardAux[i], 0, 8);
+        }
     }
 }

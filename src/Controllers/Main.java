@@ -24,7 +24,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 7;
+    public static int profundidadGlobal = 3;
     
     public static void inicializaReyes(){
                 //Obtenemos la posicion de los reyes al principio
@@ -700,25 +700,25 @@ public class Main {
     }
 
 
-     public static final String tableroPrueba[][] = {
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," ","r"," "," "},
-        {"t"," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," ","R"},
-    };
+//     public static final String tableroPrueba[][] = {
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," ","r"," "," "},
+//        {"t"," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," ","R"},
+//    };
 
-//       public static final String tableroPrueba[][] = {
-//        {"t", "c", "a", "d", "r", "a", "c", "t"},
-//        {"p", "p", "p", "p", "p", "p", "p", "p"},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {"P", "P", "P", "P", "P", "P", "P", "P"},
-//        {"T", "C", "A", "D", "R", "A", "C", "T"},
-//    };       
+       public static final String tableroPrueba[][] = {
+        {"t", "c", "a", "d", "r", "a", "c", "t"},
+        {"p", "p", "p", "p", "p", "p", "p", "p"},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {"P", "P", "P", "P", "P", "P", "P", "P"},
+        {"T", "C", "A", "D", "R", "A", "C", "T"},
+    };       
 }
