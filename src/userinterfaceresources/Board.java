@@ -1,24 +1,31 @@
 package userinterfaceresources;
 
 import Controllers.Main;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Random;
+import java.beans.PropertyChangeEvent;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.border.TitledBorder;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
 
-    private int mouseX, mouseY, newMouseX, newMouseY;
-    private int squareSize = 64;
-    private static int mouseDrag[][][]=new int[8][8][2];
-    static String chessBoardAux[][]=new String[8][8];
-    private static boolean ANTIREPEAT = false;
-    
+    int mouseX, mouseY, newMouseX, newMouseY;
+    int squareSize = 64;
+    private static JLabel labelEstado;
+    private static String movimientoFinal;
     
     //Este método se manda a llamar con repaint
     @Override
@@ -27,12 +34,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         this.setBackground(Color.LIGHT_GRAY);
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        
-        if(!ANTIREPEAT){
-            copyBoard();
-            ANTIREPEAT = true;
-        }
-        
         for(int i = 0; i <64; i+=2){
             
             /*
@@ -110,25 +111,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 g.drawImage(piezas, 10+((i%8) * squareSize)  , 10+((i/8) * squareSize) , 10+((i%8+1) * squareSize) , 10+((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
             }
         }
-        utils.Utils.imprimirTablero(chessBoardAux, 3, "Uno");
-        utils.Utils.imprimirTablero(Main.tableroPrueba, 3, "Dos");
-
-       g.setColor(Color.BLACK);
-       for (int i=0;i<8;i++) {
-            for (int j=0;j<8;j++) {
-                if (!chessBoardAux[i][j].equals(Main.tableroPrueba[i][j])) {
-                    g.drawRoundRect(j*squareSize+10+3, i*squareSize+10+3, squareSize-6, squareSize-6, 10, 10);
-                    g.drawRoundRect(j*squareSize+10+4, i*squareSize+10+4, squareSize-8, squareSize-8, 10, 10);
-                    System.out.println("Diferentes");
-                }
-            }
-        }
         
     }
-    
-    @Override
-    public void mouseDragged(MouseEvent e) {
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
     }
 
     @Override
@@ -137,6 +124,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(e.getX() < (8 * squareSize)+10  && e.getY() < (8 * squareSize)+10 ){
             mouseX = e.getX();
             mouseY = e.getY();
+            repaint();
         }
     }
 
@@ -154,25 +142,45 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 } else{ 
                     dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
                 }
+                
                 String movimientosPosibles = Main.generaMovimientos();
                 if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
+                    Window win = SwingUtilities.getWindowAncestor(this);
+                    JDialog dialog = new JDialog(win, "Espere", Dialog.ModalityType.APPLICATION_MODAL);
+                    dialog.setUndecorated(true);
+                    dialog.setSize(0, 0);
+                    dialog.setLocation(10, squareSize*8+20);
+                    dialog.add(new JLabel("Espere..."));
+                    
                     Main.makeMove(dragMove);
-                    copyBoard();
                     Main.giraTablero();
-                    Main.getLabelStatus().setText("\"Pensando\"...");
-                    String moveDone = Main.alphaBeta(Main.profundidadGlobal, 10000000, -10000000, "", 0);
-                    Main.getLabelStatus().setText("Movimiento hecho: " + moveDone);
-                    Main.makeMove(moveDone);
+                    
+                    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
+                            movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);     
+                            Main.makeMove(movimientoFinal);
+                            return null;
+                        }
+                    };
+                    
+                    worker.addPropertyChangeListener((PropertyChangeEvent pce) -> {
+                        if (pce.getPropertyName().equals("state")) {
+                            if (pce.getNewValue() == SwingWorker.StateValue.DONE) {
+                                labelEstado.setText("Movimiento hecho: " + movimientoFinal);
+                                dialog.dispose();
+                            }
+                        }
+                    });
+                    
+                    worker.execute();
+                    dialog.setVisible(true);
+                    
                     Main.giraTablero();
                     repaint();
                 }
             }
-        }
-    }
-    
-    private static void copyBoard(){
-        for (int i=0;i<8;i++) {
-            System.arraycopy(Main.tableroPrueba[i], 0, chessBoardAux[i], 0, 8);
         }
     }
 
@@ -185,52 +193,26 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
     public void mouseMoved(MouseEvent e) {
 
     }
     
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    public static void main(String[] args) {
+        Main.inicializaReyes();
+        JFrame frame = new JFrame();
+        Board board = new Board();
+        labelEstado = new JLabel(String.format("%20s", " "));
+        labelEstado.setBorder(new TitledBorder("Estado del juego"));
+        frame.add(board);
+        frame.add(labelEstado, BorderLayout.SOUTH);
+        frame.setSize(700, 800);
+        frame.setLocation(0, 0);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
-    
-    /*Aleatorio
-     @Override
-    public void mouseReleased(MouseEvent e) {
-        if(e.getX() < (8 * squareSize) + 10 && e.getY() < (8 * squareSize) + 10){
-            newMouseX = e.getX();
-            newMouseY = e.getY();
-            
-            if(e.getButton() == MouseEvent.BUTTON1){
-                String dragMove = ""; 
-                //Si es un movimiento de peon y coronación
-                if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
-                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
-                } else{ 
-                    dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
-                }
-                
-                String movimientosPosibles = Main.generaMovimientos();
-                if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
-                    Main.makeMove(dragMove);
-                    
-                    Main.giraTablero();
-                    movimientosPosibles = Main.generaMovimientos();
-                    int longitud = (movimientosPosibles.length()/5);
-                    Random rnd = new Random();
-                    int indice = rnd.nextInt(longitud);
-                    while(indice % 5 != 0){
-                        indice = rnd.nextInt(longitud);
-                    }
-                    String movimientoRespuesta = movimientosPosibles.substring(indice*5, (indice*5)+5);
-                    Main.makeMove(movimientoRespuesta);
-                    Main.giraTablero();
-                }
-            }
-            repaint();
-        }
-    }
-    */
-    
-
 }

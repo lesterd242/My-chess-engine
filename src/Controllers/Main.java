@@ -24,11 +24,10 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 5;
-    private static JLabel labelStatus = new JLabel();
+    public static int profundidadGlobal = 7;
     
-    public static void main(String[] args) {        
-        //Obtenemos la posicion de los reyes al principio
+    public static void inicializaReyes(){
+                //Obtenemos la posicion de los reyes al principio
         while(!"R".equals(tableroPrueba[posicionReyB/8][posicionReyB%8])){
             posicionReyB++;
         }
@@ -36,30 +35,8 @@ public class Main {
         while (!"r".equals(tableroPrueba[posicionReyN/8][posicionReyN%8])) {
             posicionReyN++;
         }
-          
-        
-        JFrame frame = new JFrame();
-        
-        Board board = new Board();
-        
-        JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(Color.lightGray);
-        JLabel labelLeft = new JLabel(String.format("%50s", ""));
-        labelLeft.setForeground(Color.BLACK);
-        leftPanel.add(labelLeft);
-        
-        labelStatus.setText(" ");
-        labelStatus.setBorder(new TitledBorder("Estado del juego"));
-        
-        frame.add(leftPanel, BorderLayout.WEST);
-        frame.add(board, BorderLayout.CENTER);
-        frame.add(labelStatus, BorderLayout.SOUTH);
-        frame.setSize(1000, 800);
-        frame.setLocation(0, 0);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
+    
     /*
      *     
      */
@@ -743,10 +720,5 @@ public class Main {
 //        {" ", " ", " ", " ", " ", " ", " ", " "},
 //        {"P", "P", "P", "P", "P", "P", "P", "P"},
 //        {"T", "C", "A", "D", "R", "A", "C", "T"},
-//    };
-
-    public static JLabel getLabelStatus() {
-        return labelStatus;
-    }
-       
+//    };       
 }

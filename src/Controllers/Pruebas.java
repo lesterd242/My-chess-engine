@@ -195,12 +195,5 @@ public class Pruebas {
 //    static class EventsMouse  {
 //        
 //    }
-//fjç    
-    
-    public static void main(String[] args) {
-        int val = -25000;
-        int res = 0;
-        res += val;
-        System.out.println(res);
-    }
+//   
 }

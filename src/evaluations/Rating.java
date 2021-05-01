@@ -107,7 +107,7 @@ public class Rating {
     }
     
     private static int rateMoveability(int list) {
-        int counter = list/5;
+        int counter = list;
         return counter;
     }
     
