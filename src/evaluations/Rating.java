@@ -57,12 +57,12 @@ public class Rating {
         {-10, 15,  0,  0,  0,  0, 15,-10},
         {  0,-10,-10,-10,-10,-10,-10,  0}};
     
-    public static int rating(int list, int depth){
+    public static int rating(int list, int depth, int player ){
         int counter = 0;
         /*
          * Si viene de un nodo beta, entonces se giro el tablero para evaluar 
-         * desde la posición de las blancas.
-         */        
+         * desde la posiciÃ³n de las blancas.
+         */  
         counter += rateAttack();
         counter += rateMaterial();
         counter += checkStaleMate(list, depth);
@@ -74,7 +74,11 @@ public class Rating {
         counter -= rateMoveability(Main.generaMovimientos().length());
         counter -= ratePositional();
         Main.giraTablero();
-        return -(counter+depth*50);
+        if(player == 0) {//BETA para ALFA
+        	return (counter+depth*50);
+        } else {//ALFA para BETA
+            return -(counter+depth*50);
+        }
     }
     
     private static int rateAttack(){
@@ -107,7 +111,7 @@ public class Rating {
     }
     
     private static int rateMoveability(int list) {
-        int counter = list;
+        int counter = list/2;
         return counter;
     }
     
@@ -150,4 +154,20 @@ public class Rating {
         
         return counter;
     }
+    
+    private static int rateFirstMoves(){
+        int counter = 0;
+        if (Main.historial < 10) {
+            switch (Main.piezaOrigen) {
+                case "D":
+                counter = 70;  
+                if(Main.movimientoOrigen.contains("7452")) {
+                    System.out.println("evaluando movimiento de dama");
+                    Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+                }                
+                break;
+            }
+        }
+        return 0;
+    }    
 }
