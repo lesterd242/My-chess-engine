@@ -1,4 +1,3 @@
-
 package Controllers;
 
 import evaluations.Rating;
@@ -25,9 +24,12 @@ public class Main {
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
     public static int profundidadGlobal = 3;
+    public static String piezaOrigen = "";
+    public static String movimientoOrigen = "";
+    public static short historial = 0;
     
     public static void inicializaReyes(){
-                //Obtenemos la posicion de los reyes al principio
+        //Obtenemos la posicion de los reyes al principio
         while(!"R".equals(tableroPrueba[posicionReyB/8][posicionReyB%8])){
             posicionReyB++;
         }
@@ -42,14 +44,21 @@ public class Main {
      */
     public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
         //Formato de retorno 1234b#### (movimiento, pieza, puntuacion)
+        
         String lista = generaMovimientos();
         if(profundidad == 0 || lista.length() == 0){
-            return move+(Rating.rating(lista.length(),  profundidad)+(player*2-1));//Retornamos si se alcanzo la profundidad máxima o si no hay movimientos disponibles
+            return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad mÃ¡xima o si no hay movimientos disponibles
         }
 
         lista = mezclaLista(lista);
         player = 1-player;
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
+            if(profundidad == profundidadGlobal){
+                //Utils.imprimirTablero(tableroPrueba, 0, move);
+                piezaOrigen = lista.substring(i, (i + 5)).substring(0, 2);
+                piezaOrigen = tableroPrueba[Integer.parseInt(piezaOrigen.substring(0, 1))][Integer.parseInt(piezaOrigen.substring(1, 2))];
+                movimientoOrigen = lista.substring(i, (i + 5)); 
+            }
             makeMove(lista.substring(i, (i + 5)));//Obtenemos un movimiento
             giraTablero();
             //Se llama recursivamente el metodo, enviando la profundidad menos uno, hasta que sea cero y el movimiento de la lista
@@ -58,11 +67,6 @@ public class Main {
             giraTablero();
             undoMove(lista.substring(i, (i+5)));
             if (player == 0) {
-                if(valor > 23000){
-                    beta = valor;
-                    //Utils.imprimirTablero(tableroPrueba, 89, null);
-                    return move + -(beta);
-                }
                 if(valor <= beta){//Beta negro
                     beta = valor;
                     if(profundidad == profundidadGlobal){
@@ -98,8 +102,8 @@ public class Main {
         /*
          * Se cambia la posicion de cada una de las piezas, como si el tablero 
          * girara 360 grados sobre su propio eje, la primera vez que se
-         * invoque este metodo será el turno de las negras y después de las blancas y 
-         * así sucesivamente.
+         * invoque este metodo serÃ¡ el turno de las negras y despuÃ©s de las blancas y 
+         * asÃ­ sucesivamente.
          */
         for (int i = 0; i < 32; i++) {
             row = i/8;
@@ -124,7 +128,6 @@ public class Main {
              */
             tableroPrueba[7-row][7-col] = temp;
         }
-        //Utils.imprimirTablero(tableroPrueba, 2, "");
         
         
         int reyTemp = posicionReyB;
@@ -135,7 +138,7 @@ public class Main {
     //m??todo para generar un movimiento
     public static void makeMove(String movimiento){
         try {
-            if (movimiento.charAt(4) != 'P') {//Si no es una coronación
+            if (movimiento.charAt(4) != 'P') {//Si no es una coronaciÃ³n
                 //x1,y1,x2,y2,piezacapturada
 
                 //Ponemos la pieza de la casilla de origen a la casilla final
@@ -149,7 +152,7 @@ public class Main {
                 }
 
             } else {
-                //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
+                //column1,column2,piezacapturada,nuevapieza,P estructura de la coronaciÃ³n 
 
                 //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
                 tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))] = " ";
@@ -158,11 +161,10 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-        Utils.imprimirTablero(tableroPrueba, 0, movimiento);
     }
     
     private static void undoMove(String movimiento){
-           if(movimiento.charAt(4) != 'P'){//Si no es una coronación
+           if(movimiento.charAt(4) != 'P'){//Si no es una coronaciÃ³n
             //x1,y1,x2,y2,piezacapturada
             
             //Se devuelve la pieza a su antiguo lugar
@@ -170,21 +172,19 @@ public class Main {
             //La casilla a la que se mueve ahora la llenamos con la pieza capturada o el espacio vacio
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
             
-            //Actualizamos la posición del rey
+            //Actualizamos la posiciÃ³n del rey
             if("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))])){
-                //Multiplicamos 8 por el numero de la fila y después sumamos la columna
+                //Multiplicamos 8 por el numero de la fila y despuÃ©s sumamos la columna
                 posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
             }
         }else{
-            //column1,column2,piezacapturada,nuevapieza,P estructura de la coronación 
+            //column1,column2,piezacapturada,nuevapieza,P estructura de la coronaciÃ³n 
             
             //Se coloca el peon en la casilla desde la que corono y la pieza que capturo en el lugar a coronar, si es espacio en blanco se coloca eso
             tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))]= "P";
             tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(2));
 
-        }
-           
-        Utils.imprimirTablero(tableroPrueba, 1, movimiento);
+        }      
     }
     
     public static String generaMovimientos(){
@@ -235,15 +235,15 @@ public class Main {
              if(j != 4){
                 if(Character.isLowerCase(tableroPrueba[row-1+j/3][col-1+j%3].charAt(0)) || " ".equals(tableroPrueba[row-1+j/3][col-1+j%3])){
                     piezaAnterior = tableroPrueba[row-1+j/3][col-1+j%3];//obtenemos la pieza que esta actualmente en la casilla que se esta evaluando
-                    tableroPrueba[row][col] = " ";//En la posición donde está el rey la actualizamos, como se movio entonces es un lugar vacio
+                    tableroPrueba[row][col] = " ";//En la posiciÃ³n donde estÃ¡ el rey la actualizamos, como se movio entonces es un lugar vacio
                     tableroPrueba[row-1+j/3][col-1+j%3] = "R";//Movemos al rey a la casilla que se evalu?? que tiene una pieza o esta disponible (movimiento v??lido)
-                    int posicionTemporal = posicionReyB;//Guardamos la posición del rey
-                    posicionReyB = i+(j/3)*8+j%3-9;//Simplemente restamos la cantidad de casillas para empezar en la casilla 00 y después en la 01, para incrementar la columna se usa el modulo
+                    int posicionTemporal = posicionReyB;//Guardamos la posiciÃ³n del rey
+                    posicionReyB = i+(j/3)*8+j%3-9;//Simplemente restamos la cantidad de casillas para empezar en la casilla 00 y despuÃ©s en la 01, para incrementar la columna se usa el modulo
                     if(reySeguro()){
                         lista = lista + row + col + (row-1+j/3) + (col-1+j%3) + piezaAnterior;
                     }
                     tableroPrueba[row][col] = "R";//Volvemos a colocar el rey en su posicion original
-                    tableroPrueba[row-1+j/3][col-1+j%3] = piezaAnterior;//Volvemos a colocar a la pieza que se comio en su lugar original, si es una casilla vacía también se coloca
+                    tableroPrueba[row-1+j/3][col-1+j%3] = piezaAnterior;//Volvemos a colocar a la pieza que se comio en su lugar original, si es una casilla vacÃ­a tambiÃ©n se coloca
                     posicionReyB = posicionTemporal;
                 }   
             }    
@@ -262,13 +262,13 @@ public class Main {
 
         int temp = 1;
 
-        for (int j = -1; j <= 1; j++) {//Cuando es -1 va a validar la fila anterior, cuando es 0 va a validar la misma fila hacìa la izquierda o derecha, cuando es 1, va a validar la fila siguiente
+        for (int j = -1; j <= 1; j++) {//Cuando es -1 va a validar la fila anterior, cuando es 0 va a validar la misma fila hacÃ¬a la izquierda o derecha, cuando es 1, va a validar la fila siguiente
             for (int k = -1; k <= 1; k++) {//Cuando es -1 va a validar hacia la izquierda, cuando es 0 va a validar al centro, cuando es 1 va a validar a la derecha 
                 if (j != 0 || k != 0) {//Para que no valide su propia posici??n
                     try {
                         while (" ".equals(tableroPrueba[row + temp * j][col + temp * k])) {
 
-                            piezaAnterior = tableroPrueba[row + temp * j][col + temp * k];//obtenemos la pieza anterior, quiza se podría quitar ya que solo valida espacios en blanco
+                            piezaAnterior = tableroPrueba[row + temp * j][col + temp * k];//obtenemos la pieza anterior, quiza se podrÃ­a quitar ya que solo valida espacios en blanco
                             tableroPrueba[row][col] = " ";//En la casilla donde estaba la dama ahora es un lugar vacio
                             tableroPrueba[row + temp * j][col + temp * k] = "D";//Ponemos a la dama en el nuevo lugar
 
@@ -282,7 +282,7 @@ public class Main {
                         }
 
                         if (Character.isLowerCase(tableroPrueba[row + temp * j][col + temp * k].charAt(0))) {
-                            piezaAnterior = tableroPrueba[row + temp * j][col + temp * k];//obtenemos la pieza anterior, quiza se podría quitar ya que solo valida espacios en blanco
+                            piezaAnterior = tableroPrueba[row + temp * j][col + temp * k];//obtenemos la pieza anterior, quiza se podrÃ­a quitar ya que solo valida espacios en blanco
                             tableroPrueba[row][col] = " ";//En la casilla donde estaba la dama ahora es un lugar vacio
                             tableroPrueba[row + temp * j][col + temp * k] = "D";//Ponemos a la dama en el nuevo lugar
 
@@ -310,7 +310,7 @@ public class Main {
         int temp = 1;
 
         for (int j = -1; j <= 1; j += 2) {//Ahora solo es -1 o 1, -1 para las filas superiores, 1 para las filas inferiores 
-            for (int k = -1; k <= 1; k += 2) {//-1 para las columnas izquierdas, 1 para las columnas derechas, así aumenta la columna junto con la fila
+            for (int k = -1; k <= 1; k += 2) {//-1 para las columnas izquierdas, 1 para las columnas derechas, asÃ­ aumenta la columna junto con la fila
                     try {
                         while (" ".equals(tableroPrueba[row + temp * j][col + temp * k])) {//Mientras sea un espacio vacio
 
@@ -550,8 +550,8 @@ public class Main {
     
     public static boolean reySeguro(){
         int temp = 1;
-        //Este método se ejecuta en cada movimiento de piezas
-        //Básicamente checa si el rey esta en jaque por cada movimiento de piezas en cada posicion temporal
+        //Este mÃ©todo se ejecuta en cada movimiento de piezas
+        //BÃ¡sicamente checa si el rey esta en jaque por cada movimiento de piezas en cada posicion temporal
         for(int j = -1; j <=1; j+=2){
             for (int k = -1; k <= 1; k+=2) {
                 try {
@@ -570,7 +570,7 @@ public class Main {
         
         temp = 1;
          
-        //De manera similar ocupamos los movimientos de la torre y ya que la dama también comparte los mismos movimientos ocupamos esta validación
+        //De manera similar ocupamos los movimientos de la torre y ya que la dama tambiÃ©n comparte los mismos movimientos ocupamos esta validaciÃ³n
         for (int i = -1; i <= 1; i+=2) {
             try {
                 while (" ".equals(tableroPrueba[posicionReyB/8][posicionReyB%8+temp*i])) {
@@ -594,7 +594,7 @@ public class Main {
             temp = 1;
         }
         
-        //Para el yobaca checamos primero la superior e inferior y despues la fila inferior más uno y la fila superior mas uno
+        //Para el yobaca checamos primero la superior e inferior y despues la fila inferior mÃ¡s uno y la fila superior mas uno
          for (int i = -1; i <=2; i+=2) {
             for (int j = -1; j <=2; j+=2) {
                 try {
@@ -698,17 +698,22 @@ public class Main {
 
         return nuevaLista;
     }
+    
+//    public static void main(String [] args) {
+//    	String list = mezclaLista("5241 5230 5242 5232 5222c5251 5250 5253 5254 5255 5256 5257 5263 5274 6050 6040 6151 6141 6454 6444 6555 6545 6656 6646 6757 6747 7150 7163 7263 7254 7245 7236 7227 7363 7374 7655 7657 ");
+//    	System.out.println(list);
+//    }
 
 
 //     public static final String tableroPrueba[][] = {
+//        {"r","d"," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
+//        {" "," ","R"," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," ","r"," "," "},
-//        {"t"," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," ","R"},
+//        {" "," "," "," "," "," "," "," "},
 //    };
 
        public static final String tableroPrueba[][] = {
