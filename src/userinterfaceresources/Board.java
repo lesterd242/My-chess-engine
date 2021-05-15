@@ -28,7 +28,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private static String movimientoFinal;
     private static String chessBoardAux[][] = new String[8][8];
     
-    //Este método se manda a llamar con repaint
+    //Este mÃ©todo se manda a llamar con repaint
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -38,9 +38,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for(int i = 0; i <64; i+=2){
             
             /*
-            *  Vamos incrementando las casillas, para construir primero una casilla clara y después una oscura.
-            *  primero se construye una casilla blanca en le esquina superior izquierda, después dependiendo 
-            *  de los valores en la segunda fila empezará una casilla negra y después una negra
+            *  Vamos incrementando las casillas, para construir primero una casilla clara y despuÃ©s una oscura.
+            *  primero se construye una casilla blanca en le esquina superior izquierda, despuÃ©s dependiendo 
+            *  de los valores en la segunda fila empezarÃ¡ una casilla negra y despuÃ©s una negra
             */
             //Casilla clara
             g.setColor(new Color(255, 200, 100));
@@ -120,7 +120,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 if (!chessBoardAux[i][j].equals(Main.tableroPrueba[i][j])) {
                     g.drawRoundRect(j*squareSize+10+3, i*squareSize+10+3, squareSize-6, squareSize-6, 10, 10);
                     g.drawRoundRect(j*squareSize+10+4, i*squareSize+10+4, squareSize-8, squareSize-8, 10, 10);
-                    System.out.println("Diferentes");
                 }
             }
        }
@@ -150,7 +149,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
-                //Si es un movimiento de peon y coronación
+                //Si es un movimiento de peon y coronaciÃ³n
                 if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
                     dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
                 } else{ 
@@ -167,6 +166,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.add(new JLabel("Espere..."));
                     
                     Main.makeMove(dragMove);
+                    Main.historial += 1;
                     copyBoard();
                     Main.giraTablero();
                     
@@ -176,6 +176,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                             labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
                             movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0); 
                             Main.makeMove(movimientoFinal);
+                            Main.historial += 1;
                             return null;
                         }
                     };
@@ -229,7 +230,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         frame.add(board);
         frame.add(labelEstado, BorderLayout.SOUTH);
         frame.setSize(700, 800);
-        frame.setLocation(0, 0);
+        frame.setLocation(2400, 0);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         copyBoard();
