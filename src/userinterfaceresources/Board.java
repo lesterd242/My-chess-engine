@@ -27,6 +27,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private static JLabel labelEstado;
     private static String movimientoFinal;
     private static String chessBoardAux[][] = new String[8][8];
+    static int mouseDrag[][][]=new int[8][8][2];
+    static int border=10;
+
     
     //Este mÃ©todo se manda a llamar con repaint
     @Override
@@ -110,7 +113,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             
             //Pintamos la pieza en el lugar que le corresponde
             if(j != -1 && k != -1){
-                g.drawImage(piezas, 10+((i%8) * squareSize)  , 10+((i/8) * squareSize) , 10+((i%8+1) * squareSize) , 10+((i/8+1) * squareSize), j*200, k*200, (j+1)*200, (k*200)+200, this);
+                g.drawImage(piezas, 10+((i%8) * squareSize)+mouseDrag[i/8][i%8][0]  , 10+((i/8) * squareSize)+mouseDrag[i/8][i%8][1] , 10+((i%8+1) * squareSize)+mouseDrag[i/8][i%8][0] , 10+((i/8+1) * squareSize)+mouseDrag[i/8][i%8][1], /*obtenemos el area a pintar*/
+                        j*200, k*200, (j+1)*200, (k*200)+200, /*obtenemos la sub-imagen*/ 
+                        this);
             }
         }
         
@@ -146,6 +151,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(e.getX() < 10+(8 * squareSize) && e.getY() < 10+(8 * squareSize) ){
             newMouseX = e.getX();
             newMouseY = e.getY();
+            mouseDrag[(mouseY-border)/squareSize][(mouseX-border)/squareSize][0]=0;
+            mouseDrag[(mouseY-border)/squareSize][(mouseX-border)/squareSize][1]=0;
 
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
@@ -212,7 +219,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        mouseDrag[(mouseY-border)/squareSize][(mouseX-border)/squareSize][0]=((e.getX()-border)/squareSize-(mouseX-border)/squareSize)*squareSize;
+        mouseDrag[(mouseY-border)/squareSize][(mouseX-border)/squareSize][1]=((e.getY()-border)/squareSize-(mouseY-border)/squareSize)*squareSize;
+        repaint();
     }
 
     @Override
