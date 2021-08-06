@@ -1,23 +1,7 @@
 package Controllers;
 
 import evaluations.Rating;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Random;
-import java.util.Scanner;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-import userinterfaceresources.Board;
-import utils.Utils;
-
 
 public class Main {
 
@@ -698,12 +682,6 @@ public class Main {
 
         return nuevaLista;
     }
-    
-//    public static void main(String [] args) {
-//    	String list = mezclaLista("5241 5230 5242 5232 5222c5251 5250 5253 5254 5255 5256 5257 5263 5274 6050 6040 6151 6141 6454 6444 6555 6545 6656 6646 6757 6747 7150 7163 7263 7254 7245 7236 7227 7363 7374 7655 7657 ");
-//    	System.out.println(list);
-//    }
-
 
 //     public static final String tableroPrueba[][] = {
 //        {"r","d"," "," "," "," "," "," "},
