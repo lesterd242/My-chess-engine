@@ -11,6 +11,10 @@ public class Main {
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
+    // para guardar el estado de los enroques
+    private static boolean enroques[][] = {{false, false, false, false},//Enroques hechos corto y largo por bando
+                                           {false, false, false, false},//torres de la columa a,b por bando, si se movieron
+                                           {false, false}};//reyes, si se movieron
     
     public static void inicializaReyes(){
         //Obtenemos la posicion de los reyes al principio
@@ -683,25 +687,25 @@ public class Main {
         return nuevaLista;
     }
 
-//     public static final String tableroPrueba[][] = {
-//        {"r","d"," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," ","R"," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//    };
+     public static final String tableroPrueba[][] = {
+        {"r"," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," ","R"," "," ","T"},
+    };
 
-       public static final String tableroPrueba[][] = {
-        {"t", "c", "a", "d", "r", "a", "c", "t"},
-        {"p", "p", "p", "p", "p", "p", "p", "p"},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", "R", "A", "C", "T"},
-    };       
+//       public static final String tableroPrueba[][] = {
+//        {"t", "c", "a", "d", "r", "a", "c", "t"},
+//        {"p", "p", "p", "p", "p", "p", "p", "p"},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {"P", "P", "P", "P", "P", "P", "P", "P"},
+//        {"T", "C", "A", "D", "R", "A", "C", "T"},
+//    };       
 }
