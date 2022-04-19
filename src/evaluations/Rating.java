@@ -68,6 +68,7 @@ public class Rating {
         counter += checkStaleMate(list, depth);
         counter += rateMoveability(list);
         counter += ratePositional();
+        counter -= rateFirstMoves();
         Main.giraTablero();
         counter -= rateAttack();
         counter -= rateMaterial();
@@ -157,17 +158,14 @@ public class Rating {
     
     private static int rateFirstMoves(){
         int counter = 0;
-        if (Main.historial < 10) {
+        if (Main.historial < 4) {
             switch (Main.piezaOrigen) {
                 case "D":
-                counter = 70;  
-                if(Main.movimientoOrigen.contains("7452")) {
-                    System.out.println("evaluando movimiento de dama");
-                    Utils.imprimirTablero(Main.tableroPrueba, 0, null);
-                }                
+                    counter = -100;
                 break;
+                    
             }
         }
-        return 0;
+        return counter;
     }    
 }

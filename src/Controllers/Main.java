@@ -7,7 +7,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 3;
+    public static int profundidadGlobal = 5;
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
@@ -38,7 +38,7 @@ public class Main {
             return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad mÃ¡xima o si no hay movimientos disponibles
         }
 
-        lista = mezclaLista(lista);
+        lista = lmr(lista);
         player = 1-player;
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
             if(profundidad == profundidadGlobal){
@@ -635,6 +635,23 @@ public class Main {
         return true;
     }
     
+    private static String lmr(String listaPreLtr){
+        String listaLtr = "";
+        int numeroJugadas =  listaPreLtr.length() / 5;
+        int counter = 0;
+        for (int i = 0; i < numeroJugadas; i++) {
+            String jugada = listaPreLtr.substring(counter, counter+5);
+            if(Character.isLowerCase(jugada.charAt(4))){
+                listaLtr += jugada;
+                listaPreLtr = listaPreLtr.replace(jugada, "");
+            }else {
+                counter+=5;
+            }
+        }
+        listaLtr += mezclaLista(listaPreLtr);
+        return listaLtr;
+    }
+    
     private static String mezclaLista(String lista) {
         Random rnd = new Random();
         //System.out.println("Imprimiendo lista a desordenar " + lista);
@@ -687,25 +704,25 @@ public class Main {
         return nuevaLista;
     }
 
-     public static final String tableroPrueba[][] = {
-        {"r"," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," ","R"," "," ","T"},
-    };
+//     public static final String tableroPrueba[][] = {
+//        {"r"," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," ","R"," "," ","T"},
+//    };
 
-//       public static final String tableroPrueba[][] = {
-//        {"t", "c", "a", "d", "r", "a", "c", "t"},
-//        {"p", "p", "p", "p", "p", "p", "p", "p"},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {"P", "P", "P", "P", "P", "P", "P", "P"},
-//        {"T", "C", "A", "D", "R", "A", "C", "T"},
-//    };       
+       public static final String tableroPrueba[][] = {
+        {"t", "c", "a", "d", "r", "a", "c", "t"},
+        {"p", "p", "p", "p", "p", "p", "p", "p"},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {" ", " ", " ", " ", " ", " ", " ", " "},
+        {"P", "P", "P", "P", "P", "P", "P", "P"},
+        {"T", "C", "A", "D", "R", "A", "C", "T"},
+    };       
 }

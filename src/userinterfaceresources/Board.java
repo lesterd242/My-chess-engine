@@ -173,7 +173,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.add(new JLabel("Espere..."));
                     
                     Main.makeMove(dragMove);
-                    Main.historial += 1;
                     copyBoard();
                     Main.giraTablero();
                     
