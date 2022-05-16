@@ -57,6 +57,26 @@ public class Rating {
         {-10, 15,  0,  0,  0,  0, 15,-10},
         {  0,-10,-10,-10,-10,-10,-10,  0}};
     
+    static int kingMidBoard[][]={
+        {-30,-40,-40,-50,-50,-40,-40,-30},
+        {-30,-40,-40,-50,-50,-40,-40,-30},
+        {-30,-40,-40,-50,-50,-40,-40,-30},
+        {-30,-40,-40,-50,-50,-40,-40,-30},
+        {-20,-30,-30,-40,-40,-30,-30,-20},
+        {-10,-20,-20,-20,-20,-20,-20,-10},
+        { 20, 20,  0,  0,  0,  0, 20, 20},
+        { 20, 30, 10,  0,  0, 10, 30, 20}};
+    static int kingEndBoard[][]={
+        {-50,-40,-30,-20,-20,-30,-40,-50},
+        {-30,-20,-10,  0,  0,-10,-20,-30},
+        {-30,-10, 20, 30, 30, 20,-10,-30},
+        {-30,-10, 30, 40, 40, 30,-10,-30},
+        {-30,-10, 30, 40, 40, 30,-10,-30},
+        {-30,-10, 20, 30, 30, 20,-10,-30},
+        {-30,-30,  0,  0,  0,  0,-30,-30},
+        {-50,-30,-30,-30,-30,-30,-30,-50}};
+    
+    
     public static int rating(int list, int depth, int player ){
         int counter = 0;
         /*
@@ -64,20 +84,22 @@ public class Rating {
          * desde la posiciÃ³n de las blancas.
          */  
         counter += rateAttack();
-        counter += rateMaterial();
+        int material = rateMaterial();
+        counter += material;
         counter += checkStaleMate(list, depth);
         counter += rateMoveability(list);
-        counter += ratePositional();
-        counter -= rateFirstMoves();
+        counter += ratePositional(material);
         Main.giraTablero();
         counter -= rateAttack();
-        counter -= rateMaterial();
+        material = rateMaterial();
+        counter -= material;
         counter -= rateMoveability(Main.generaMovimientos().length());
-        counter -= ratePositional();
+        counter -= ratePositional(material);
         Main.giraTablero();
         if(player == 0) {//BETA para ALFA
         	return (counter+depth*50);
         } else {//ALFA para BETA
+            counter -= rateFirstMoves();
             return -(counter+depth*50);
         }
     }
@@ -130,7 +152,7 @@ public class Rating {
         return counter;
     }
     
-    private static int ratePositional(){
+    private static int ratePositional(int material){
         int counter = 0;
         
         for (int i = 0; i < 64; i++) {
@@ -150,6 +172,13 @@ public class Rating {
                 case "A":
                     counter += BISHOPBOARD[i/8][i%8];
                     break;
+                case "R":
+                    if(material <= 1300){
+                        counter += kingMidBoard[i/8][i%8];
+                    } else {
+                        counter += kingEndBoard[i/8][i%8];
+                    }
+                    break;
             }
         }
         
@@ -158,7 +187,7 @@ public class Rating {
     
     private static int rateFirstMoves(){
         int counter = 0;
-        if (Main.historial < 4) {
+        if (Main.historial < 5) {
             switch (Main.piezaOrigen) {
                 case "D":
                     counter = -100;

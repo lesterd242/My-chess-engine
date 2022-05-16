@@ -7,7 +7,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 5;
+    public static int profundidadGlobal = 7;
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
@@ -635,21 +635,35 @@ public class Main {
         return true;
     }
     
-    private static String lmr(String listaPreLtr){
-        String listaLtr = "";
-        int numeroJugadas =  listaPreLtr.length() / 5;
-        int counter = 0;
-        for (int i = 0; i < numeroJugadas; i++) {
-            String jugada = listaPreLtr.substring(counter, counter+5);
-            if(Character.isLowerCase(jugada.charAt(4))){
-                listaLtr += jugada;
-                listaPreLtr = listaPreLtr.replace(jugada, "");
-            }else {
-                counter+=5;
+    private static String lmr(String listaPreLtr){        
+        String listaCoronacion = "";
+        String listaCapturas = "";
+        String listaFront = "";
+        String listaIgual = "";
+        String listaRestante = "";
+        String item;
+        int origen, destino;
+        for (int x = 0; x < listaPreLtr.length(); x+=5){
+            item = listaPreLtr.substring(x, x+5);
+            if(Character.isLowerCase(item.charAt(4))){//si es una captura
+                listaCapturas += item;
+            } else if(item.charAt(4) == 'P') {//si es una coronacion
+                listaCoronacion += item;
+            } else {
+                origen = Integer.parseInt(item.substring(0, 2));
+                destino = Integer.parseInt(item.substring(2, 4));
+                if(String.valueOf(origen).substring(0, 1).equals(String.valueOf(destino).substring(0, 1))){//si es un movimiento en la misma fila
+                    listaIgual += item;
+                } else if(origen > destino) {// si es una jugada hacia adelante
+                    listaFront += item; 
+                } else {//si es una jugada hacia atras
+                    listaRestante += item;
+                }
             }
         }
-        listaLtr += mezclaLista(listaPreLtr);
-        return listaLtr;
+                
+        
+        return listaCoronacion + listaCapturas + mezclaLista(listaFront) + mezclaLista(listaIgual) + mezclaLista(listaRestante);
     }
     
     private static String mezclaLista(String lista) {
