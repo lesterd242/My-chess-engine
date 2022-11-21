@@ -31,7 +31,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     static int border=10;
 
     
-    //Este mÃ©todo se manda a llamar con repaint
+    //Este metodo se manda a llamar con repaint
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -41,9 +41,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for(int i = 0; i <64; i+=2){
             
             /*
-            *  Vamos incrementando las casillas, para construir primero una casilla clara y despuÃ©s una oscura.
-            *  primero se construye una casilla blanca en le esquina superior izquierda, despuÃ©s dependiendo 
-            *  de los valores en la segunda fila empezarÃ¡ una casilla negra y despuÃ©s una negra
+            *  Vamos incrementando las casillas, para construir primero una casilla clara y despues una oscura.
+            *  primero se construye una casilla blanca en le esquina superior izquierda, despues dependiendo 
+            *  de los valores en la segunda fila empezara una casilla negra y despues una negra
             */
             //Casilla clara
             g.setColor(new Color(255, 200, 100));
@@ -156,7 +156,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
-                //Si es un movimiento de peon y coronaciÃ³n
+                //Si es un movimiento de peon y coronacion
                 if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
                     dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
                 } else{ 
