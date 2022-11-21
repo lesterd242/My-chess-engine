@@ -238,7 +238,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         frame.add(board);
         frame.add(labelEstado, BorderLayout.SOUTH);
         frame.setSize(700, 800);
-        frame.setLocation(2400, 0);
+        frame.setLocation(0, 0);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         copyBoard();

@@ -35,7 +35,7 @@ public class Main {
         
         String lista = generaMovimientos();
         if(profundidad == 0 || lista.length() == 0){
-            return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad mÃ¡xima o si no hay movimientos disponibles
+            return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad maxima o si no hay movimientos disponibles
         }
 
         lista = lmr(lista);
@@ -90,8 +90,8 @@ public class Main {
         /*
          * Se cambia la posicion de cada una de las piezas, como si el tablero 
          * girara 360 grados sobre su propio eje, la primera vez que se
-         * invoque este metodo serÃ¡ el turno de las negras y despuÃ©s de las blancas y 
-         * asÃ­ sucesivamente.
+         * invoque este metodo sera el turno de las negras y despues de las blancas y 
+         * asi sucesivamente.
          */
         for (int i = 0; i < 32; i++) {
             row = i/8;
@@ -126,7 +126,7 @@ public class Main {
     //m??todo para generar un movimiento
     public static void makeMove(String movimiento){
         try {
-            if (movimiento.charAt(4) != 'P') {//Si no es una coronaciÃ³n
+            if (movimiento.charAt(4) != 'P') {//Si no es una coronacion
                 //x1,y1,x2,y2,piezacapturada
 
                 //Ponemos la pieza de la casilla de origen a la casilla final
@@ -140,7 +140,7 @@ public class Main {
                 }
 
             } else {
-                //column1,column2,piezacapturada,nuevapieza,P estructura de la coronaciÃ³n 
+                //column1,column2,piezacapturada,nuevapieza,P estructura de la coronacion 
 
                 //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
                 tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))] = " ";
@@ -152,7 +152,7 @@ public class Main {
     }
     
     private static void undoMove(String movimiento){
-           if(movimiento.charAt(4) != 'P'){//Si no es una coronaciÃ³n
+           if(movimiento.charAt(4) != 'P'){//Si no es una coronacion
             //x1,y1,x2,y2,piezacapturada
             
             //Se devuelve la pieza a su antiguo lugar
@@ -160,9 +160,9 @@ public class Main {
             //La casilla a la que se mueve ahora la llenamos con la pieza capturada o el espacio vacio
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
             
-            //Actualizamos la posiciÃ³n del rey
+            //Actualizamos la posicion del rey
             if("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))])){
-                //Multiplicamos 8 por el numero de la fila y despuÃ©s sumamos la columna
+                //Multiplicamos 8 por el numero de la fila y despues sumamos la columna
                 posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
             }
         }else{
