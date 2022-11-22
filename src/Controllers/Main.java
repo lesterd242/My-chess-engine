@@ -7,7 +7,7 @@ public class Main {
 
     private static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 7;
+    public static int profundidadGlobal = 6;
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
@@ -127,9 +127,10 @@ public class Main {
     public static void makeMove(String movimiento){
         try {
             if (movimiento.charAt(4) != 'P') {//Si no es una coronacion
-                //x1,y1,x2,y2,piezacapturada
-
-                //Ponemos la pieza de la casilla de origen a la casilla final
+                /*
+                 * x1,y1,x2,y2,piezacapturada
+                 * Ponemos la pieza de la casilla de origen a la casilla final
+                 */
                 tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
                 //La casilla de inicio ahora tiene estar vacia
                 tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
@@ -137,8 +138,9 @@ public class Main {
                 if ("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))])) {
                     //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la 
                     posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
+                } else {
+                    
                 }
-
             } else {
                 //column1,column2,piezacapturada,nuevapieza,P estructura de la coronacion 
 
@@ -719,17 +721,17 @@ public class Main {
     }
 
 //     public static final String tableroPrueba[][] = {
-//        {"r"," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," ","r"," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," "," "," "," "," "},
 //        {" "," "," "," ","R"," "," ","T"},
 //    };
 
-       public static final String tableroPrueba[][] = {
+    public static final String tableroPrueba[][] = {
         {"t", "c", "a", "d", "r", "a", "c", "t"},
         {"p", "p", "p", "p", "p", "p", "p", "p"},
         {" ", " ", " ", " ", " ", " ", " ", " "},
@@ -737,6 +739,5 @@ public class Main {
         {" ", " ", " ", " ", " ", " ", " ", " "},
         {" ", " ", " ", " ", " ", " ", " ", " "},
         {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", "R", "A", "C", "T"},
-    };       
+        {"T", "C", "A", "D", "R", "A", "C", "T"},};   
 }

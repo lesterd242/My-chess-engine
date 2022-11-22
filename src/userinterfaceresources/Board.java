@@ -172,6 +172,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.setLocation(10, squareSize*8+20);
                     dialog.add(new JLabel("Espere..."));
                     
+                    setEnroques(dragMove, 1);
                     Main.makeMove(dragMove);
                     copyBoard();
                     Main.giraTablero();
@@ -181,6 +182,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         protected Void doInBackground() throws Exception {
                             labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
                             movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0); 
+                            setEnroques(movimientoFinal, 0);
                             Main.makeMove(movimientoFinal);
                             Main.historial += 1;
                             return null;
@@ -244,6 +246,25 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         copyBoard();
     }
     
+    private static void setEnroques(String movimiento, int turno){
+        System.out.println(movimiento);
+        if(Main.tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))].equals("T")){
+            System.out.println("Es de torre");
+            if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==0){
+                if(turno == 0){
+                    System.out.println("Es de torre negra columna h");
+                } else {
+                     System.out.println("Es de torre blanca columna a");
+                }
+            } else if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==7){
+                 if(turno == 0){
+                    System.out.println("Es de torre negra columna a");
+                } else {
+                     System.out.println("Es de torre blanca columna h");
+                }
+            }
+        }  
+    }
     
     private static void copyBoard(){
         for (int i=0;i<8;i++) {

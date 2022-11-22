@@ -96,11 +96,11 @@ public class Rating {
         counter -= rateMoveability(Main.generaMovimientos().length());
         counter -= ratePositional(material);
         Main.giraTablero();
-        if(player == 0) {//BETA para ALFA
-        	return (counter+depth*50);
+        if (player == 0) {//BETA para ALFA
+            counter += rateFirstMoves();
+            return (counter + depth * 50);
         } else {//ALFA para BETA
-            counter -= rateFirstMoves();
-            return -(counter+depth*50);
+            return -(counter + depth * 50);
         }
     }
     
@@ -190,7 +190,7 @@ public class Rating {
         if (Main.historial < 5) {
             switch (Main.piezaOrigen) {
                 case "D":
-                    counter = -100;
+                    counter = -150;
                 break;
                     
             }
