@@ -1,6 +1,6 @@
-package userinterfaceresources;
+package interfaces;
 
-import Controllers.Main;
+import controllers.Main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
