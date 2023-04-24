@@ -1,6 +1,6 @@
 package evaluations;
 
-import controllers.Main;
+import Controllers.Main;
 import utils.Utils;
 
 public class Rating {

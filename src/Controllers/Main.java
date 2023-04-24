@@ -1,4 +1,4 @@
-package controllers;
+package Controllers;
 
 import evaluations.Rating;
 import java.util.Random;
