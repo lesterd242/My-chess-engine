@@ -2,6 +2,7 @@ package Controllers;
 
 import evaluations.Rating;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public class Main {
 
@@ -12,8 +13,8 @@ public class Main {
     public static String movimientoOrigen = "";
     public static short historial = 0;
     // para guardar el estado de los enroques
-    private static boolean enroques[][] = {{false, false, false, false},//Enroques hechos corto y largo por bando
-                                           {false, false, false, false},//torres de la columa a,b por bando, si se movieron
+    public static boolean enroques[][] = {{false, false, false, false},//Enroques hechos corto y largo por bando
+                                           {false, false, false, false},//torres de la columa a,h por bando, si se movieron
                                            {false, false}};//reyes, si se movieron
     
     public static void inicializaReyes(){
@@ -637,6 +638,38 @@ public class Main {
         return true;
     }
     
+    
+    public static String puedeEnrocar(String move){
+    	String enroqueMov = "";
+		Predicate<Integer> condicion = pos -> {
+			tableroPrueba[7][(posicionReyB % 8) + pos] = "R";
+			tableroPrueba[7][posicionReyB % 8] = " ";
+			boolean esSeguro = reySeguro();
+			tableroPrueba[7][(posicionReyB % 8) + pos] = " ";
+			tableroPrueba[7][posicionReyB % 8] = "R";
+			return esSeguro;
+		};
+		
+		Predicate<Integer> checarEspacios = pos ->{
+			return tableroPrueba[7][(posicionReyB % 8) + pos].equals(" ")
+					&& tableroPrueba[7][(posicionReyB % 8) + pos+1].equals(" ");
+		};
+		    		
+    	try {
+			if(!enroques[2][0] && !enroques[1][0]) {
+				if(checarEspacios.test(1)) {
+					if(condicion.test(1) & condicion.test(2)) {
+						enroqueMov += "7"+(posicionReyB % 8) + "7" + ((posicionReyB % 8)+2);
+					}
+				}
+			}
+		} catch (Exception e) {
+			
+		}
+    	
+    	return enroqueMov;
+    }
+    
     private static String lmr(String listaPreLtr){        
         String listaCoronacion = "";
         String listaCapturas = "";
@@ -720,24 +753,24 @@ public class Main {
         return nuevaLista;
     }
 
-//     public static final String tableroPrueba[][] = {
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," ","r"," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," "," "," "," "," "},
-//        {" "," "," "," ","R"," "," ","T"},
-//    };
+     public static final String tableroPrueba[][] = {
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," ","r"," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "," "},
+        {" "," "," "," ","R"," "," ","T"},
+    };
 
-    public static final String tableroPrueba[][] = {
-        {"t", "c", "a", "d", "r", "a", "c", "t"},
-        {"p", "p", "p", "p", "p", "p", "p", "p"},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {" ", " ", " ", " ", " ", " ", " ", " "},
-        {"P", "P", "P", "P", "P", "P", "P", "P"},
-        {"T", "C", "A", "D", "R", "A", "C", "T"},};   
+//    public static final String tableroPrueba[][] = {
+//        {"t", "c", "a", "d", "r", "a", "c", "t"},
+//        {"p", "p", "p", "p", "p", "p", "p", "p"},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {" ", " ", " ", " ", " ", " ", " ", " "},
+//        {"P", "P", "P", "P", "P", "P", "P", "P"},
+//        {"T", "C", "A", "D", "R", "A", "C", "T"},};   
 }
