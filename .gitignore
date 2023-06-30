@@ -3,3 +3,10 @@
 /nbproject/
 
 /build/
+/JavaProject8/nbproject/private/
+/JavaProject8/build/
+/JavaProject8/dist/
+/bin/
+.classpath
+.DS_Store
+.project

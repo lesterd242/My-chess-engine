@@ -1,6 +1,22 @@
 package Controllers;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+
+import utils.Utils;
 
 public class Pruebas {
 
@@ -195,5 +211,51 @@ public class Pruebas {
 //    static class EventsMouse  {
 //        
 //    }
-//   
+//  
+	static JButton button = new JButton("enviar");
+
+	
+	public static void window() {
+		JFrame frame = new JFrame();
+		
+		JTextField field = new JTextField();
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.makeMove(field.getText()+" ", 0, true);
+				Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+				Main.giraTablero();
+				String movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+                Main.makeMove(movimientoFinal, 1, true);
+                Main.giraTablero();
+                Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);
+			}
+		});
+		
+		frame.add(field, BorderLayout.NORTH);
+		frame.add(button, BorderLayout.CENTER);
+		
+		frame.setSize(200, 160);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	}
+	
+	public static void setEnviroment() {
+		Main.inicializaReyes();
+		Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+		window();
+	}
+	
+	static  String getCastles(String str) {
+		List<String> list = new ArrayList<>();
+		Stream.iterate(0, i -> i+5).limit(str.length()/5).forEach(i -> list.add(str.substring(i, i+5)));
+		return list.stream().filter(s -> s.contains("E")).reduce((s1, s2) -> s1+=s2).orElse("0000 ");
+		
+	}
+	
+	public static void main(String[] args) {
+		setEnviroment();
+	}
+	
 }

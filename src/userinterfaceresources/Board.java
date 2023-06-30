@@ -1,6 +1,8 @@
 package userinterfaceresources;
 
 import Controllers.Main;
+import utils.Utils;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -156,34 +158,39 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
+                String movimientosPosibles = Main.generaMovimientos(1);
                 //Si es un movimiento de peon y coronacion
                 if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
                     dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
-                } else{ 
+                } else{
                     dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
+                    if(movimientosPosibles.contains("E")) {
+                		System.out.println("Lista contiene enroque");
+                		int index = movimientosPosibles.indexOf("E");
+                		String movEnroque = movimientosPosibles.substring(index-4, index);
+                		if(movEnroque.equals(dragMove.trim())) {
+							dragMove = dragMove.trim()+"E";
+                		}
+                	}
                 }
                 
-                String movimientosPosibles = Main.generaMovimientos();
-                if(movimientosPosibles.replaceAll(dragMove, "").length() < movimientosPosibles.length()){
+                if(movimientosPosibles.replaceAll(dragMove.trim(), "").length() < movimientosPosibles.length()){
                     Window win = SwingUtilities.getWindowAncestor(this);
                     JDialog dialog = new JDialog(win, "Espere", Dialog.ModalityType.APPLICATION_MODAL);
                     dialog.setUndecorated(true);
                     dialog.setSize(0, 0);
                     dialog.setLocation(10, squareSize*8+20);
                     dialog.add(new JLabel("Espere..."));
-                    
-                    setEnroques(dragMove, 1);
-                    Main.makeMove(dragMove);
+                    Main.makeMove(dragMove, 1, true);
                     copyBoard();
                     Main.giraTablero();
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
                         protected Void doInBackground() throws Exception {
-                            labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
-                            movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0); 
-                            setEnroques(movimientoFinal, 0);
-                            Main.makeMove(movimientoFinal);
+                            //labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
+                            movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+                            Main.makeMove(movimientoFinal, 0, true);
                             Main.historial += 1;
                             return null;
                         }
@@ -192,7 +199,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     worker.addPropertyChangeListener((PropertyChangeEvent pce) -> {
                         if (pce.getPropertyName().equals("state")) {
                             if (pce.getNewValue() == SwingWorker.StateValue.DONE) {
-                                labelEstado.setText("Movimiento hecho: " + movimientoFinal);
+                                labelEstado.setText("Movimiento hecho: " + movimientoFinal.concat(" profundidad:"+Main.profundidadGlobal ));
                                 dialog.dispose();
                             }
                         }
@@ -203,6 +210,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     
                     Main.giraTablero();
                     repaint();
+                    Utils.imprimirTablero(Main.tableroPrueba, 1, null);
                     
                     
                 }
@@ -244,26 +252,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         copyBoard();
-    }
-    
-    private static void setEnroques(String movimiento, int turno){
-        System.out.println(movimiento);
-        if(Main.tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))].equals("T")){
-            System.out.println("Es de torre");
-            if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==0){
-                if(turno == 0){
-                    System.out.println("Es de torre negra columna h");
-                } else {
-                     System.out.println("Es de torre blanca columna a");
-                }
-            } else if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==7){
-                 if(turno == 0){
-                    System.out.println("Es de torre negra columna a");
-                } else {
-                     System.out.println("Es de torre blanca columna h");
-                }
-            }
-        }  
     }
     
     private static void copyBoard(){

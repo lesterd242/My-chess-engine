@@ -6,16 +6,19 @@ import java.util.function.Predicate;
 
 public class Main {
 
-    private static int posicionReyB, posicionReyN;
+    static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 6;
+    public static int profundidadGlobal = 1;
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
     // para guardar el estado de los enroques
-    public static boolean enroques[][] = {{false, false, false, false},//Enroques hechos corto y largo por bando
-                                           {false, false, false, false},//torres de la columa a,h por bando, si se movieron
-                                           {false, false}};//reyes, si se movieron
+    public static boolean enroques[] = {false, false, false, false};// Enroques hechos corto y largo por bando
+    public static boolean matrizTorres[] = {false, false, false, false};// Torres de la columa a,h por bando, si se movieron
+    public static boolean matrizReyes[] = {false, false};// Reyes, si se movieron
+    
+    public static int[] contadorTorres = {0, 0, 0, 0}; // Guarda el registro de los movimientos de las torres
+    public static int[] contadorReyes = {0, 0};// Guarda el registro de los movimientos de los reyes
     
     public static void inicializaReyes(){
         //Obtenemos la posicion de los reyes al principio
@@ -26,6 +29,127 @@ public class Main {
         while (!"r".equals(tableroPrueba[posicionReyN/8][posicionReyN%8])) {
             posicionReyN++;
         }
+        setEnroquesTrue();
+    }
+    
+    public static void setEnroquesTrue() {
+    	
+    	// Blanco
+    	if(posicionReyB != 60) {
+    		matrizReyes[0] = true;
+    	}
+    	
+    	if(tableroPrueba[7][7].charAt(0) != 'T') {
+    		matrizTorres[1] = true;
+    	}
+    	
+    	if(tableroPrueba[7][0].charAt(0) != 'T') {
+    		matrizTorres[0] = true;
+    	}
+    	
+    	// Negro
+    	if(posicionReyN != 4) {
+    		matrizReyes[1] = true;
+    	}
+    	
+    	if(tableroPrueba[0][7].charAt(0) != 't') {
+    		matrizTorres[3] = true;
+    	}
+    	
+    	if(tableroPrueba[0][0].charAt(0) != 't') {
+    		matrizTorres[2] = true;
+    	}
+    }
+    
+    public static void sumaEnroques(String movimiento, int turno, boolean isFinal){
+    	turno = 1-turno;
+        String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
+        if(pieza.equals("T")){
+            if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==0){
+                if(turno == 1){
+                    System.out.println("Es de torre blanca columna a");
+                    matrizTorres[0] = true;
+                    contadorTorres[0]++;
+                } else {
+                    System.out.println("Es de torre negra columna h");
+                    matrizTorres[3] = true;
+                    contadorTorres[3]++;
+                }
+            } else if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==7){
+                 if(turno == 1){
+                    System.out.println("Es de torre blanca columna h");
+                    matrizTorres[1] = true;
+                	contadorTorres[1]++;
+                } else {
+                	System.out.println("Es de torre negra columna a");
+                	matrizTorres[2] = true;
+                	contadorTorres[2]++;
+                }
+            }
+		} else if (pieza.equals("R")) {
+			if (turno == 1) {
+				matrizReyes[0] = true;
+				contadorReyes[0]++;
+				if(isFinal) {
+					/*
+					 * Se incrementa  en un valor que no se podría alcanzar en un juego 
+					 * para, que una vez que la jugada elegida por el humano o la maquina 
+					 * sea de rey, no se pueda volver a 0 para esta propiedad.
+					 */
+					contadorReyes[0] += 200;
+				}
+			} else {
+				matrizReyes[1] = true;
+				contadorReyes[1]++;
+				if(isFinal) {
+					contadorReyes[1] += 200;
+				}
+			}
+        }
+    }
+    
+    public static void restaEnroques(String movimiento, int turno, boolean isFinal){
+    	turno = 1-turno;
+        String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
+        if(pieza.equals("T")){
+            if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==0){
+                if(turno == 1){
+                    System.out.println("Es de torre blanca columna a");
+                    matrizTorres[0] = true;
+                    contadorTorres[0]++;
+                } else {
+                    System.out.println("Es de torre negra columna h");
+                    matrizTorres[3] = true;
+                    contadorTorres[3]++;
+                }
+            } else if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==7){
+                 if(turno == 1){
+                    System.out.println("Es de torre blanca columna h");
+                    matrizTorres[1] = true;
+                	contadorTorres[1]++;
+                } else {
+                	System.out.println("Es de torre negra columna a");
+                	matrizTorres[2] = true;
+                	contadorTorres[2]++;
+                }
+            }
+		} else if (pieza.equals("R")) {
+			if (turno == 1) {
+				contadorReyes[0]--;
+				if(contadorReyes[0] == 0) {
+					matrizReyes[0] = false;
+				} else {
+					matrizReyes[0] = true;
+				}
+			} else {
+				contadorReyes[1]--;
+				if(contadorReyes[1] == 0) {
+					matrizReyes[1] = false;
+				} else {
+					matrizReyes[1] = true;
+				}
+			}
+        }
     }
     
     /*
@@ -33,14 +157,13 @@ public class Main {
      */
     public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
         //Formato de retorno 1234b#### (movimiento, pieza, puntuacion)
-        
-        String lista = generaMovimientos();
+    	player = 1-player;
+        String lista = generaMovimientos(player);
         if(profundidad == 0 || lista.length() == 0){
             return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad maxima o si no hay movimientos disponibles
         }
-
+        
         lista = lmr(lista);
-        player = 1-player;
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
             if(profundidad == profundidadGlobal){
                 //Utils.imprimirTablero(tableroPrueba, 0, move);
@@ -48,13 +171,13 @@ public class Main {
                 piezaOrigen = tableroPrueba[Integer.parseInt(piezaOrigen.substring(0, 1))][Integer.parseInt(piezaOrigen.substring(1, 2))];
                 movimientoOrigen = lista.substring(i, (i + 5)); 
             }
-            makeMove(lista.substring(i, (i + 5)));//Obtenemos un movimiento
+            makeMove(lista.substring(i, (i + 5)), player, false);//Obtenemos un movimiento
             giraTablero();
             //Se llama recursivamente el metodo, enviando la profundidad menos uno, hasta que sea cero y el movimiento de la lista
             String stringReturn = alphaBeta(profundidad - 1, beta, alpha, (lista.substring(i, (i + 5))), player);
             int valor = Integer.valueOf(stringReturn.substring(5));
             giraTablero();
-            undoMove(lista.substring(i, (i+5)));
+            undoMove(lista.substring(i, (i+5)), player);
             if (player == 0) {
                 if(valor <= beta){//Beta negro
                     beta = valor;
@@ -125,23 +248,46 @@ public class Main {
     }
     
     //m??todo para generar un movimiento
-    public static void makeMove(String movimiento){
+    public static void makeMove(String movimiento, int player, boolean esFinal){
         try {
-            if (movimiento.charAt(4) != 'P') {//Si no es una coronacion
-                /*
+            if (movimiento.charAt(4) != 'P' && movimiento.charAt(4) != 'E') {//Si no es una coronacion y tampoco un enroque
+            	
+            	String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
+                if ("R".equals(pieza)) {
+                    //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la columna
+                    posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
+                    sumaEnroques(movimiento, player, esFinal);
+                } else if("T".equals(pieza)) {
+                	sumaEnroques(movimiento, player, esFinal);
+                }
+            	/*
                  * x1,y1,x2,y2,piezacapturada
                  * Ponemos la pieza de la casilla de origen a la casilla final
                  */
                 tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
                 //La casilla de inicio ahora tiene estar vacia
                 tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
-
-                if ("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))])) {
-                    //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la 
-                    posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
-                } else {
-                    
-                }
+            } else if(movimiento.charAt(4) == 'E') { // si es un enroque
+            	/*
+            	 * x1,y1,x2,y2,E estructura del enroque
+            	 * */
+            	
+            	tableroPrueba[7][Character.getNumericValue(movimiento.charAt(1))] = " ";
+            	tableroPrueba[7][Character.getNumericValue(movimiento.charAt(3))] = "R";
+            	
+            	if(movimiento.charAt(3) == '6') { // si es enroque corto blanco
+            		tableroPrueba[7][7] = " ";
+                	tableroPrueba[7][5] = "T";
+            	} else if(movimiento.charAt(3) == '2'){ // si es enroque largo blanco
+            		tableroPrueba[7][0] = " ";
+                	tableroPrueba[7][3] = "T";
+            	} else if(movimiento.charAt(3) == '1') { // si es enroque corto negro
+            		tableroPrueba[7][0] = " ";
+                	tableroPrueba[7][2] = "T";
+            	} else { // si es enroque largo negro
+            		tableroPrueba[7][7] = " ";
+                	tableroPrueba[7][4] = "T";
+            	}
             } else {
                 //column1,column2,piezacapturada,nuevapieza,P estructura de la coronacion 
 
@@ -154,20 +300,46 @@ public class Main {
         }
     }
     
-    private static void undoMove(String movimiento){
-           if(movimiento.charAt(4) != 'P'){//Si no es una coronacion
-            //x1,y1,x2,y2,piezacapturada
+    public static void undoMove(String movimiento, int player){
+           if(movimiento.charAt(4) != 'P' && movimiento.charAt(4) != 'E'){//Si no es una coronacion y tampoco un enroque
+            String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
+            //Actualizamos la posicion del rey
+            if("R".equals(pieza)){
+                //Multiplicamos 8 por el numero de la fila y despues sumamos la columna
+                posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
+                restaEnroques(movimiento, player, false);
+            } else if("T".equals(pieza)) {
+            	
+            }
             
+        	//x1,y1,x2,y2,piezacapturada
             //Se devuelve la pieza a su antiguo lugar
             tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
             //La casilla a la que se mueve ahora la llenamos con la pieza capturada o el espacio vacio
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
             
-            //Actualizamos la posicion del rey
-            if("R".equals(tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))])){
-                //Multiplicamos 8 por el numero de la fila y despues sumamos la columna
-                posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
-            }
+        } else if(movimiento.charAt(4) == 'E') { // si es un enroque
+        	/*
+        	 * x1,y1,x2,y2,E estructura del enroque
+        	 * */
+        	
+        	tableroPrueba[7][Character.getNumericValue(movimiento.charAt(1))] = "R";
+        	tableroPrueba[7][Character.getNumericValue(movimiento.charAt(3))] = " ";
+        	
+        	if(movimiento.charAt(3) == '6') { // si es enroque corto blanco
+        		tableroPrueba[7][7] = "T";
+            	tableroPrueba[7][5] = " ";
+        	} else if(movimiento.charAt(3) == '2'){ // si es enroque largo blanco
+        		tableroPrueba[7][0] = "T";
+            	tableroPrueba[7][3] = " ";
+        	} else if(movimiento.charAt(3) == '1') { // si es enroque corto negro
+        		tableroPrueba[7][0] = "T";
+            	tableroPrueba[7][2] = " ";
+        	} else { // si es enroque largo negro
+        		tableroPrueba[7][7] = "T";
+            	tableroPrueba[7][4] = " ";
+        	}
+        	
         }else{
             //column1,column2,piezacapturada,nuevapieza,P estructura de la coronacion 
             
@@ -178,7 +350,7 @@ public class Main {
         }      
     }
     
-    public static String generaMovimientos(){
+    public static String generaMovimientos(int player){
         
         
         
@@ -188,7 +360,7 @@ public class Main {
         for(int x = 0; x <64; x++){
             switch(tableroPrueba[x/8][x%8]){
                 case "R":
-                    lista += movimientosRey(x);
+                    lista += movimientosRey(x, player);
                     break;
                 case "D":
                     lista += movimientosDama(x);
@@ -212,7 +384,7 @@ public class Main {
     }
     
     
-    private static String movimientosRey(int i){
+    private static String movimientosRey(int i, int player){
         String lista = "";
         String piezaAnterior;
         
@@ -242,6 +414,12 @@ public class Main {
             }
         }
         
+        if(reySeguro()) { // Solo puede enrocar si no esta amenazado
+        	  try {
+      			lista+=puedeEnrocar(player);
+      		} catch (Exception e) {
+      		}
+        }
         return lista; 
     }
     
@@ -639,36 +817,69 @@ public class Main {
     }
     
     
-    public static String puedeEnrocar(String move){
-    	String enroqueMov = "";
+	public static String puedeEnrocar(int player) {
+		player = 1-player;
+		int indexR, indexTA, indexTB, posicionA = 1, posicionB = 2, posicionC=3;
+		String enroqueMov = "";
+		if(player == 1) {
+			indexR = 0;
+			indexTA = 0;
+			indexTB = 1;
+		} else {
+			indexR = 1;
+			indexTA = 2;
+			indexTB = 3;
+			posicionA = -1;
+			posicionB = -2;
+			posicionC = -3;
+		}
 		Predicate<Integer> condicion = pos -> {
 			tableroPrueba[7][(posicionReyB % 8) + pos] = "R";
 			tableroPrueba[7][posicionReyB % 8] = " ";
+			posicionReyB += pos;
 			boolean esSeguro = reySeguro();
+			posicionReyB -= pos;
 			tableroPrueba[7][(posicionReyB % 8) + pos] = " ";
 			tableroPrueba[7][posicionReyB % 8] = "R";
 			return esSeguro;
 		};
-		
-		Predicate<Integer> checarEspacios = pos ->{
-			return tableroPrueba[7][(posicionReyB % 8) + pos].equals(" ")
-					&& tableroPrueba[7][(posicionReyB % 8) + pos+1].equals(" ");
+
+		Predicate<Integer> checarEspacios = pos -> {
+			return tableroPrueba[7][(posicionReyB % 8) + pos].equals(" ");
 		};
-		    		
-    	try {
-			if(!enroques[2][0] && !enroques[1][0]) {
-				if(checarEspacios.test(1)) {
-					if(condicion.test(1) & condicion.test(2)) {
-						enroqueMov += "7"+(posicionReyB % 8) + "7" + ((posicionReyB % 8)+2);
+
+		if (!matrizReyes[indexR]) {
+			try { // corto
+				if (!matrizTorres[indexTB]) {
+					if (checarEspacios.test(posicionA) && checarEspacios.test(posicionB)) {
+						if (condicion.test(posicionA) && condicion.test(posicionB)) {
+							enroqueMov += "7" + (posicionReyB % 8) + "7" + ((posicionReyB % 8) + posicionB) + "E";
+						}
 					}
 				}
+			} catch (Exception e) {
+
 			}
-		} catch (Exception e) {
 			
+			posicionA = posicionA*-1;
+			posicionB = posicionB*-1;
+			posicionC = posicionC*-1;
+			
+			try { // largo
+				if (!matrizTorres[indexTA]) { 
+					if (checarEspacios.test(posicionA) && checarEspacios.test(posicionB) && checarEspacios.test(posicionC)) {
+						if (condicion.test(posicionA) && condicion.test(posicionB)) {
+							enroqueMov += "7" + (posicionReyB % 8) + "7" + ((posicionReyB % 8) + posicionB) + "E";
+						}
+					}
+				}
+			} catch (Exception e) {
+
+			}
 		}
-    	
-    	return enroqueMov;
-    }
+
+		return enroqueMov;
+	}
     
     private static String lmr(String listaPreLtr){        
         String listaCoronacion = "";
@@ -753,24 +964,25 @@ public class Main {
         return nuevaLista;
     }
 
-     public static final String tableroPrueba[][] = {
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," ","r"," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "," "},
-        {" "," "," "," ","R"," "," ","T"},
-    };
-
-//    public static final String tableroPrueba[][] = {
-//        {"t", "c", "a", "d", "r", "a", "c", "t"},
-//        {"p", "p", "p", "p", "p", "p", "p", "p"},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {" ", " ", " ", " ", " ", " ", " ", " "},
-//        {"P", "P", "P", "P", "P", "P", "P", "P"},
-//        {"T", "C", "A", "D", "R", "A", "C", "T"},};   
+//     public static final String tableroPrueba[][] = {
+//        {" "," "," "," ","r"," "," ","t"},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," "," "," "," "," "},
+//        {" "," "," "," ","R"," "," "," "},
+//    };
+    
+  public static final String tableroPrueba[][] = {
+  {"t", "c", "a", "d", "r", "a", "c", "t"},
+  {"p", "p", "p", "p", "p", "p", "p", "p"},
+  {" ", " ", " ", " ", " ", " ", " ", " "},
+  {" ", " ", " ", " ", " ", " ", " ", " "},
+  {" ", " ", " ", " ", " ", " ", " ", " "},
+  {" ", " ", " ", " ", " ", " ", " ", " "},
+  {"P", "P", "P", "P", "P", "P", "P", "P"},
+  {"T", "C", "A", "D", "R", "A", "C", "T"},};  
+  
 }

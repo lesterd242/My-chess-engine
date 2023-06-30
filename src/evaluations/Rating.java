@@ -93,10 +93,10 @@ public class Rating {
         counter -= rateAttack();
         material = rateMaterial();
         counter -= material;
-        counter -= rateMoveability(Main.generaMovimientos().length());
+        counter -= rateMoveability(Main.generaMovimientos(1-player).length());
         counter -= ratePositional(material);
         Main.giraTablero();
-        if (player == 0) {//BETA para ALFA
+        if (player == 1) {//BETA para ALFA
             counter += rateFirstMoves();
             return (counter + depth * 50);
         } else {//ALFA para BETA
