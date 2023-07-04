@@ -108,7 +108,7 @@ public class Main {
         }
     }
     
-    public static void restaEnroques(String movimiento, int turno, boolean isFinal){
+    public static void restaEnroques(String movimiento, int turno){
     	turno = 1-turno;
         String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
         if(pieza.equals("T")){
@@ -268,6 +268,7 @@ public class Main {
                 //La casilla de inicio ahora tiene estar vacia
                 tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
             } else if(movimiento.charAt(4) == 'E') { // si es un enroque
+            	sumaEnroques(movimiento, player, esFinal);
             	/*
             	 * x1,y1,x2,y2,E estructura del enroque
             	 * */
@@ -307,9 +308,9 @@ public class Main {
             if("R".equals(pieza)){
                 //Multiplicamos 8 por el numero de la fila y despues sumamos la columna
                 posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(0)) + Character.getNumericValue(movimiento.charAt(1));
-                restaEnroques(movimiento, player, false);
+                restaEnroques(movimiento, player);
             } else if("T".equals(pieza)) {
-            	
+            	restaEnroques(movimiento, player);
             }
             
         	//x1,y1,x2,y2,piezacapturada
@@ -319,6 +320,7 @@ public class Main {
             tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = String.valueOf(movimiento.charAt(4));
             
         } else if(movimiento.charAt(4) == 'E') { // si es un enroque
+        	restaEnroques(movimiento, player);
         	/*
         	 * x1,y1,x2,y2,E estructura del enroque
         	 * */
@@ -350,12 +352,7 @@ public class Main {
         }      
     }
     
-    public static String generaMovimientos(int player){
-        
-        
-        
-        long init, fin;
-        init = System.currentTimeMillis();
+    public static String generaMovimientos(int player){        
         String lista = "";
         for(int x = 0; x <64; x++){
             switch(tableroPrueba[x/8][x%8]){
@@ -378,8 +375,6 @@ public class Main {
                     lista += movimientosPeon(x);
             }
         }
-        fin = System.currentTimeMillis();
-        //System.out.println("Tiempo en generar movimientos " + (fin - init) + " ms.");
         return lista;
     }
     
@@ -621,7 +616,6 @@ public class Main {
 
             }
         }
-
         return lista;
     }
     
@@ -712,9 +706,7 @@ public class Main {
             }
         } catch (Exception e) {
         }
-
-        return lista;
-        
+        return lista;      
     }
     
     public static boolean reySeguro(){
@@ -811,8 +803,7 @@ public class Main {
                 }
             } catch (Exception e) {
             }
-        }
-        
+        }    
         return true;
     }
     
@@ -877,7 +868,6 @@ public class Main {
 
 			}
 		}
-
 		return enroqueMov;
 	}
     
@@ -906,9 +896,7 @@ public class Main {
                     listaRestante += item;
                 }
             }
-        }
-                
-        
+        } 
         return listaCoronacion + listaCapturas + mezclaLista(listaFront) + mezclaLista(listaIgual) + mezclaLista(listaRestante);
     }
     
@@ -960,7 +948,6 @@ public class Main {
         } else {
             return lista;
         }
-
         return nuevaLista;
     }
 
@@ -976,13 +963,13 @@ public class Main {
 //    };
     
   public static final String tableroPrueba[][] = {
-  {"t", "c", "a", "d", "r", "a", "c", "t"},
+  {"t", "c", "a", "d", "r", " ", " ", "t"},
   {"p", "p", "p", "p", "p", "p", "p", "p"},
   {" ", " ", " ", " ", " ", " ", " ", " "},
   {" ", " ", " ", " ", " ", " ", " ", " "},
   {" ", " ", " ", " ", " ", " ", " ", " "},
   {" ", " ", " ", " ", " ", " ", " ", " "},
   {"P", "P", "P", "P", "P", "P", "P", "P"},
-  {"T", "C", "A", "D", "R", "A", "C", "T"},};  
+  {"T", "C", "A", "D", "R", " ", " ", "T"},};  
   
 }

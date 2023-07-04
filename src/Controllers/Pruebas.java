@@ -219,17 +219,14 @@ public class Pruebas {
 		JFrame frame = new JFrame();
 		
 		JTextField field = new JTextField();
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Main.makeMove(field.getText()+" ", 0, true);
-				Utils.imprimirTablero(Main.tableroPrueba, 0, null);
-				Main.giraTablero();
-				String movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
-                Main.makeMove(movimientoFinal, 1, true);
-                Main.giraTablero();
-                Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);
-			}
+		button.addActionListener((e) -> {
+			Main.makeMove(field.getText() + " ", 0, true);
+			Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+			Main.giraTablero();
+			String movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+			Main.makeMove(movimientoFinal, 1, true);
+			Main.giraTablero();
+			Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);
 		});
 		
 		frame.add(field, BorderLayout.NORTH);

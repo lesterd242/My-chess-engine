@@ -174,9 +174,9 @@ public class Rating {
                     break;
                 case "R":
                     if(material <= 1300){
-                        counter += kingMidBoard[i/8][i%8];
-                    } else {
                         counter += kingEndBoard[i/8][i%8];
+                    } else {
+                        counter += kingMidBoard[i/8][i%8];
                     }
                     break;
             }

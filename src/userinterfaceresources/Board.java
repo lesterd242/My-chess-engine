@@ -158,7 +158,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
-                String movimientosPosibles = Main.generaMovimientos(1);
+                String movimientosPosibles = Main.generaMovimientos(0);
                 //Si es un movimiento de peon y coronacion
                 if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
                     dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
@@ -181,7 +181,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.setSize(0, 0);
                     dialog.setLocation(10, squareSize*8+20);
                     dialog.add(new JLabel("Espere..."));
-                    Main.makeMove(dragMove, 1, true);
+                    Main.makeMove(dragMove, 0, true); // 0 para que cuando entre al metodo se transfome en 1 y coincida 
                     copyBoard();
                     Main.giraTablero();
                     
@@ -190,7 +190,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         protected Void doInBackground() throws Exception {
                             //labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
                             movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
-                            Main.makeMove(movimientoFinal, 0, true);
+                            Main.makeMove(movimientoFinal, 1, true);
                             Main.historial += 1;
                             return null;
                         }
