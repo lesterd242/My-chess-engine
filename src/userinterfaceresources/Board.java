@@ -211,8 +211,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     Main.giraTablero();
                     repaint();
                     Utils.imprimirTablero(Main.tableroPrueba, 1, null);
-                    
-                    
                 }
             }
         }

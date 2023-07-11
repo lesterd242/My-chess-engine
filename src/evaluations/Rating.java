@@ -65,7 +65,7 @@ public class Rating {
         {-20,-30,-30,-40,-40,-30,-30,-20},
         {-10,-20,-20,-20,-20,-20,-20,-10},
         { 20, 20,  0,  0,  0,  0, 20, 20},
-        { 20, 30, 10,  0,  0, 10, 30, 20}};
+        { 20, 35, 10, -5, -5, 10, 40, 20}};
     static int kingEndBoard[][]={
         {-50,-40,-30,-20,-20,-30,-40,-50},
         {-30,-20,-10,  0,  0,-10,-20,-30},
@@ -88,13 +88,13 @@ public class Rating {
         counter += material;
         counter += checkStaleMate(list, depth);
         counter += rateMoveability(list);
-        counter += ratePositional(material);
+        counter += ratePositional(material, player);
         Main.giraTablero();
         counter -= rateAttack();
         material = rateMaterial();
         counter -= material;
         counter -= rateMoveability(Main.generaMovimientos(1-player).length());
-        counter -= ratePositional(material);
+        counter -= ratePositional(material, 1-player);
         Main.giraTablero();
         if (player == 1) {//BETA para ALFA
             counter += rateFirstMoves();
@@ -152,7 +152,7 @@ public class Rating {
         return counter;
     }
     
-    private static int ratePositional(int material){
+    private static int ratePositional(int material, int player){
         int counter = 0;
         
         for (int i = 0; i < 64; i++) {
@@ -178,6 +178,17 @@ public class Rating {
                     } else {
                         counter += kingMidBoard[i/8][i%8];
                     }
+                    
+                    if(player == 0) {
+                    	if (Main.contadorReyes[0] > 180) {
+                    		counter += 30;
+                    	}
+                    } else {
+                    	if (Main.contadorReyes[1] > 180) {
+                    		counter += 30;
+                    	}
+                    }
+                    
                     break;
             }
         }

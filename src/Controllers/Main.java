@@ -2,6 +2,10 @@ package Controllers;
 
 import evaluations.Rating;
 import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
 public class Main {
@@ -13,7 +17,6 @@ public class Main {
     public static String movimientoOrigen = "";
     public static short historial = 0;
     // para guardar el estado de los enroques
-    public static boolean enroques[] = {false, false, false, false};// Enroques hechos corto y largo por bando
     public static boolean matrizTorres[] = {false, false, false, false};// Torres de la columa a,h por bando, si se movieron
     public static boolean matrizReyes[] = {false, false};// Reyes, si se movieron
     
@@ -112,25 +115,25 @@ public class Main {
     	turno = 1-turno;
         String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))];
         if(pieza.equals("T")){
+            BiConsumer<Integer, Integer> setContador = (ind, cant) -> {
+            	matrizTorres[ind] = !(cant == 0);
+            };
+            
             if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==0){
                 if(turno == 1){
                     System.out.println("Es de torre blanca columna a");
-                    matrizTorres[0] = true;
-                    contadorTorres[0]++;
+                    setContador.accept(0, --contadorTorres[0]);
                 } else {
                     System.out.println("Es de torre negra columna h");
-                    matrizTorres[3] = true;
-                    contadorTorres[3]++;
+                    setContador.accept(3, --contadorTorres[3]);
                 }
             } else if(Character.getNumericValue(movimiento.charAt(0))==7 && Character.getNumericValue(movimiento.charAt(1))==7){
                  if(turno == 1){
                     System.out.println("Es de torre blanca columna h");
-                    matrizTorres[1] = true;
-                	contadorTorres[1]++;
+                    setContador.accept(1, --contadorTorres[1]);
                 } else {
                 	System.out.println("Es de torre negra columna a");
-                	matrizTorres[2] = true;
-                	contadorTorres[2]++;
+                	setContador.accept(2, --contadorTorres[2]);
                 }
             }
 		} else if (pieza.equals("R")) {
@@ -163,7 +166,7 @@ public class Main {
             return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad maxima o si no hay movimientos disponibles
         }
         
-        lista = lmr(lista);
+        lista = "6343 7371E7071 ";
         for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
             if(profundidad == profundidadGlobal){
                 //Utils.imprimirTablero(tableroPrueba, 0, move);
