@@ -3,16 +3,13 @@ package Controllers;
 import evaluations.Rating;
 import java.util.Random;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
 public class Main {
 
     static int posicionReyB, posicionReyN;
     public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 1;
+    public static int profundidadGlobal = 4;
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
@@ -95,7 +92,7 @@ public class Main {
 				contadorReyes[0]++;
 				if(isFinal) {
 					/*
-					 * Se incrementa  en un valor que no se podría alcanzar en un juego 
+					 * Se incrementa  en un valor que no se podria alcanzar en un juego 
 					 * para, que una vez que la jugada elegida por el humano o la maquina 
 					 * sea de rey, no se pueda volver a 0 para esta propiedad.
 					 */
@@ -163,11 +160,13 @@ public class Main {
     	player = 1-player;
         String lista = generaMovimientos(player);
         if(profundidad == 0 || lista.length() == 0){
-            return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));//Retornamos si se alcanzo la profundidad maxima o si no hay movimientos disponibles
+        	//Retornamos si se alcanzo la profundidad maxima o si no hay movimientos disponibles
+            return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));
         }
         
-        lista = "6343 7371E7071 ";
-        for(int i = 0; i < lista.length(); i+=5){//Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
+        lista = lmr(lista);
+        //Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
+        for(int i = 0; i < lista.length(); i+=5){
             if(profundidad == profundidadGlobal){
                 //Utils.imprimirTablero(tableroPrueba, 0, move);
                 piezaOrigen = lista.substring(i, (i + 5)).substring(0, 2);
@@ -294,7 +293,6 @@ public class Main {
             	}
             } else {
                 //column1,column2,piezacapturada,nuevapieza,P estructura de la coronacion 
-
                 //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
                 tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))] = " ";
                 tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
@@ -627,7 +625,6 @@ public class Main {
         String piezaAnterior; 
         int row = i/8;
         int col = i%8;
-        int temp = 1;
         
         for (int j = -1; j <=1; j+=2) {
             try {

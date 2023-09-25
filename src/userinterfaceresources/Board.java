@@ -24,7 +24,8 @@ import javax.swing.border.TitledBorder;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
 
-    int mouseX, mouseY, newMouseX, newMouseY;
+    private static final long serialVersionUID = 1L;
+	int mouseX, mouseY, newMouseX, newMouseY;
     int squareSize = 64;
     private static JLabel labelEstado;
     private static String movimientoFinal;
