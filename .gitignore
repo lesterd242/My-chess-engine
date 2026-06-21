@@ -10,3 +10,9 @@
 .classpath
 .DS_Store
 .project
+.DS_Store
+*.class
+*.xml
+*.iml
+.DS_Store
+.DS_Store
