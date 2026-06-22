@@ -223,7 +223,7 @@ public class Pruebas {
 			Main.makeMove(field.getText() + " ", 0, true);
 			Utils.imprimirTablero(Main.tableroPrueba, 0, null);
 			Main.giraTablero();
-			String movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+			String movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
 			Main.makeMove(movimientoFinal, 1, true);
 			Main.giraTablero();
 			Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);

@@ -7,9 +7,14 @@ import java.util.function.Predicate;
 
 public class Main {
 
+    public static final int BLACK = 0;
+    public static final int WHITE = 1;
+    public static final int BOARD_SIZE = 8;
+    public static final int MOVE_LENGTH = 5;
+    public static final int DEFAULT_SEARCH_DEPTH = 2;
+
     static int posicionReyB, posicionReyN;
-    public static int humanAsWhite = 1;
-    public static int profundidadGlobal = 4;
+    public static int searchDepth = DEFAULT_SEARCH_DEPTH;
     public static String piezaOrigen = "";
     public static String movimientoOrigen = "";
     public static short historial = 0;
@@ -155,59 +160,57 @@ public class Main {
     /*
      *     
      */
-    public static String alphaBeta(int profundidad, int beta, int alpha, String move, int player){
-        //Formato de retorno 1234b#### (movimiento, pieza, puntuacion)
-    	player = 1-player;
-        String lista = generaMovimientos(player);
-        if(profundidad == 0 || lista.length() == 0){
-        	//Retornamos si se alcanzo la profundidad maxima o si no hay movimientos disponibles
-            return move+(Rating.rating(lista.length(),  profundidad, player)+(player*2-1));
+    public static String alphaBeta(int depth, int beta, int alpha, String bestMove, int previousPlayer) {
+        // Return format: five-character move followed by its numeric score.
+        int currentPlayer = opponentOf(previousPlayer);
+        String moves = generaMovimientos(currentPlayer);
+        if (depth == 0 || moves.isEmpty()) {
+            int score = Rating.rating(moves.length(), depth, currentPlayer) + (currentPlayer * 2 - 1);
+            return bestMove + score;
         }
-        
-        lista = lmr(lista);
-        //Como un movimiento se compone de 5 caracteres, incrementamos el contador en 5
-        for(int i = 0; i < lista.length(); i+=5){
-            if(profundidad == profundidadGlobal){
-                //Utils.imprimirTablero(tableroPrueba, 0, move);
-                piezaOrigen = lista.substring(i, (i + 5)).substring(0, 2);
+
+        moves = orderMoves(moves);
+        for (int i = 0; i < moves.length(); i += MOVE_LENGTH) {
+            String candidateMove = moves.substring(i, i + MOVE_LENGTH);
+            if (depth == searchDepth) {
+                piezaOrigen = candidateMove.substring(0, 2);
                 piezaOrigen = tableroPrueba[Integer.parseInt(piezaOrigen.substring(0, 1))][Integer.parseInt(piezaOrigen.substring(1, 2))];
-                movimientoOrigen = lista.substring(i, (i + 5)); 
+                movimientoOrigen = candidateMove;
             }
-            makeMove(lista.substring(i, (i + 5)), player, false);//Obtenemos un movimiento
+
+            makeMove(candidateMove, currentPlayer, false);
             giraTablero();
-            //Se llama recursivamente el metodo, enviando la profundidad menos uno, hasta que sea cero y el movimiento de la lista
-            String stringReturn = alphaBeta(profundidad - 1, beta, alpha, (lista.substring(i, (i + 5))), player);
-            int valor = Integer.valueOf(stringReturn.substring(5));
+            String searchResult = alphaBeta(depth - 1, beta, alpha, candidateMove, currentPlayer);
+            int score = Integer.parseInt(searchResult.substring(MOVE_LENGTH));
             giraTablero();
-            undoMove(lista.substring(i, (i+5)), player);
-            if (player == 0) {
-                if(valor <= beta){//Beta negro
-                    beta = valor;
-                    if(profundidad == profundidadGlobal){
-                        move = stringReturn.substring(0, 5);
+            undoMove(candidateMove, currentPlayer);
+
+            if (currentPlayer == BLACK) {
+                if (score <= beta) {
+                    beta = score;
+                    if (depth == searchDepth) {
+                        bestMove = searchResult.substring(0, MOVE_LENGTH);
                     }
                 }
-            } else { 
-                if(valor > alpha){//Alpha blanco
-                    alpha = valor;
-                    if(profundidad == profundidadGlobal){
-                        move = stringReturn.substring(0, 5);
+            } else {
+                if (score > alpha) {
+                    alpha = score;
+                    if (depth == searchDepth) {
+                        bestMove = searchResult.substring(0, MOVE_LENGTH);
                     }
                 }
             }
-            if(alpha >= beta){
-                if(player == 0){
-                    return move + beta;
-                }else{
-                    return move + alpha;
-                }
+
+            if (alpha >= beta) {
+                return bestMove + (currentPlayer == BLACK ? beta : alpha);
             }
         }
-        if(player == 0){
-            return move + beta;
-        }else{
-            return move + alpha;
-        }
+
+        return bestMove + (currentPlayer == BLACK ? beta : alpha);
+    }
+
+    private static int opponentOf(int player) {
+        return 1 - player;
     }
     
     public static void giraTablero(){
@@ -355,8 +358,8 @@ public class Main {
     
     public static String generaMovimientos(int player){        
         String lista = "";
-        for(int x = 0; x <64; x++){
-            switch(tableroPrueba[x/8][x%8]){
+        for (int x = 0; x < BOARD_SIZE * BOARD_SIZE; x++) {
+            switch (tableroPrueba[x / BOARD_SIZE][x % BOARD_SIZE]) {
                 case "R":
                     lista += movimientosRey(x, player);
                     break;
@@ -871,7 +874,7 @@ public class Main {
 		return enroqueMov;
 	}
     
-    private static String lmr(String listaPreLtr){        
+    private static String orderMoves(String listaPreLtr) {
         String listaCoronacion = "";
         String listaCapturas = "";
         String listaFront = "";
@@ -879,8 +882,8 @@ public class Main {
         String listaRestante = "";
         String item;
         int origen, destino;
-        for (int x = 0; x < listaPreLtr.length(); x+=5){
-            item = listaPreLtr.substring(x, x+5);
+        for (int x = 0; x < listaPreLtr.length(); x += MOVE_LENGTH) {
+            item = listaPreLtr.substring(x, x + MOVE_LENGTH);
             if(Character.isLowerCase(item.charAt(4))){//si es una captura
                 listaCapturas += item;
             } else if(item.charAt(4) == 'P') {//si es una coronacion
@@ -906,20 +909,20 @@ public class Main {
         String nuevaLista = "";
 
         if (lista != null && !lista.equals("")) {
-            if (lista.length() == 5) {
+            if (lista.length() == MOVE_LENGTH) {
                 return lista;
             }
-            int numeroJugadas = lista.length() / 5;
+            int numeroJugadas = lista.length() / MOVE_LENGTH;
             int nuevosIndices[] = new int[numeroJugadas];
             String listaDividida[] = new String[numeroJugadas];
             numeroJugadas = 0;
             for (int i = 0; i < lista.length();) {
-                listaDividida[numeroJugadas] = lista.substring(i, i + 5);
+                listaDividida[numeroJugadas] = lista.substring(i, i + MOVE_LENGTH);
                 numeroJugadas++;
-                i = i + 5;
+                i = i + MOVE_LENGTH;
             }
 
-            numeroJugadas = lista.length() / 5;
+            numeroJugadas = lista.length() / MOVE_LENGTH;
             int x = 1;
             int indiceRnd;
             boolean bandera;

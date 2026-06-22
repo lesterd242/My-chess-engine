@@ -190,7 +190,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         @Override
                         protected Void doInBackground() throws Exception {
                             //labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
-                            movimientoFinal = Main.alphaBeta(Main.profundidadGlobal, 1000000, -1000000, "", 0);
+                            movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
                             Main.makeMove(movimientoFinal, 1, true);
                             Main.historial += 1;
                             return null;
@@ -200,7 +200,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     worker.addPropertyChangeListener((PropertyChangeEvent pce) -> {
                         if (pce.getPropertyName().equals("state")) {
                             if (pce.getNewValue() == SwingWorker.StateValue.DONE) {
-                                labelEstado.setText("Movimiento hecho: " + movimientoFinal.concat(" profundidad:"+Main.profundidadGlobal ));
+                                labelEstado.setText("Movimiento hecho: " + movimientoFinal.concat(" profundidad:" + Main.searchDepth));
                                 dialog.dispose();
                             }
                         }
