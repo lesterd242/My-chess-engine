@@ -1,7 +1,7 @@
 package evaluations;
 
-import Controllers.Main;
-import utils.Utils;
+import components.Main;
+import components.MoveGenerator;
 
 public class Rating {
     
@@ -94,7 +94,7 @@ public class Rating {
         counter -= rateAttack();
         material = rateMaterial();
         counter -= material;
-        counter -= rateMoveability(Main.generaMovimientos(1-player).length());
+        counter -= rateMoveability(MoveGenerator.generaMovimientos(1-player).length());
         counter -= ratePositional(material, 1-player);
         Main.giraTablero();
         if (player == 1) {//BETA para ALFA
@@ -145,7 +145,7 @@ public class Rating {
         
         int counter = 0;
         if (list == 0) {
-            if (!Main.reySeguro()) {
+            if (!MoveGenerator.reySeguro()) {
                 counter += -(depth == 0 ? 25000:25000*depth);
             } else {
                 counter += -(depth == 0 ? 12000:12000*depth);

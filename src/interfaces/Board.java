@@ -1,6 +1,7 @@
-package userinterfaceresources;
+package interfaces;
 
-import Controllers.Main;
+import components.Main;
+import components.MoveGenerator;
 import utils.Utils;
 
 import java.awt.BorderLayout;
@@ -159,7 +160,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
             if(e.getButton() == MouseEvent.BUTTON1){
                 String dragMove = ""; 
-                String movimientosPosibles = Main.generaMovimientos(0);
+                String movimientosPosibles = MoveGenerator.generaMovimientos(0);
                 //Si es un movimiento de peon y coronacion
                 if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
                     dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";

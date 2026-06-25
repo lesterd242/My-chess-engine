@@ -1,0 +1,48 @@
+package components;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+
+import utils.Utils;
+
+public class Pruebas {
+
+	static JButton button = new JButton("enviar");
+	
+	public static void window() {
+		JFrame frame = new JFrame();
+		
+		JTextField field = new JTextField();
+		button.addActionListener((e) -> {
+			Main.makeMove(field.getText() + " ", 0, true);
+			Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+			Main.giraTablero();
+			String movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
+			Main.makeMove(movimientoFinal, 1, true);
+			Main.giraTablero();
+			Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);
+		});
+		
+		frame.add(field, BorderLayout.NORTH);
+		frame.add(button, BorderLayout.CENTER);
+		
+		frame.setSize(200, 160);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	}
+	
+	public static void setEnviroment() {
+		Main.inicializaReyes();
+		Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+		window();
+	}
+	
+	public static void main(String[] args) {
+		setEnviroment();
+	}
+}
