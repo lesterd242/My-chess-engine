@@ -2,6 +2,7 @@ package interfaces;
 
 import components.Main;
 import components.MoveGenerator;
+import components.MoveMaker;
 import utils.Utils;
 
 import java.awt.BorderLayout;
@@ -183,7 +184,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.setSize(0, 0);
                     dialog.setLocation(10, squareSize*8+20);
                     dialog.add(new JLabel("Espere..."));
-                    Main.makeMove(dragMove, 0, true); // 0 para que cuando entre al metodo se transfome en 1 y coincida 
+                    MoveMaker.makeMove(dragMove, 0, true); // 0 para que cuando entre al metodo se transfome en 1 y coincida
                     copyBoard();
                     Main.giraTablero();
                     
@@ -192,7 +193,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         protected Void doInBackground() throws Exception {
                             //labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
                             movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
-                            Main.makeMove(movimientoFinal, 1, true);
+                            MoveMaker.makeMove(movimientoFinal, 1, true);
                             Main.historial += 1;
                             return null;
                         }

@@ -18,11 +18,11 @@ public class Pruebas {
 		
 		JTextField field = new JTextField();
 		button.addActionListener((e) -> {
-			Main.makeMove(field.getText() + " ", 0, true);
+			MoveMaker.makeMove(field.getText() + " ", 0, true);
 			Utils.imprimirTablero(Main.tableroPrueba, 0, null);
 			Main.giraTablero();
 			String movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
-			Main.makeMove(movimientoFinal, 1, true);
+			MoveMaker.makeMove(movimientoFinal, 1, true);
 			Main.giraTablero();
 			Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);
 		});

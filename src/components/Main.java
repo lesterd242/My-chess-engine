@@ -180,7 +180,7 @@ public class Main {
                 movimientoOrigen = candidateMove;
             }
 
-            makeMove(candidateMove, currentPlayer, false);
+            MoveMaker.makeMove(candidateMove, currentPlayer, false);
             giraTablero();
             String searchResult = alphaBeta(depth - 1, beta, alpha, candidateMove, currentPlayer);
             int score = Integer.parseInt(searchResult.substring(MOVE_LENGTH));
@@ -252,56 +252,6 @@ public class Main {
         int reyTemp = posicionReyB;
         posicionReyB = 63 - posicionReyN;
         posicionReyN=63-reyTemp;
-    }
-    
-    //m??todo para generar un movimiento
-    public static void makeMove(String movimiento, int player, boolean esFinal){
-        try {
-            if (movimiento.charAt(4) != 'P' && movimiento.charAt(4) != 'E') {//Si no es una coronacion y tampoco un enroque
-            	
-            	String pieza = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
-                if ("R".equals(pieza)) {
-                    //Actualizamos la posicion del rey blanco obteniendo la fila y despues sumando la columna
-                    posicionReyB = 8 * Character.getNumericValue(movimiento.charAt(2)) + Character.getNumericValue(movimiento.charAt(3));
-                }
-            	/*
-                 * x1,y1,x2,y2,piezacapturada
-                 * Ponemos la pieza de la casilla de origen a la casilla final
-                 */
-                tableroPrueba[Character.getNumericValue(movimiento.charAt(2))][Character.getNumericValue(movimiento.charAt(3))] = tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))];
-                //La casilla de inicio ahora tiene estar vacia
-                tableroPrueba[Character.getNumericValue(movimiento.charAt(0))][Character.getNumericValue(movimiento.charAt(1))] = " ";
-            } else if(movimiento.charAt(4) == 'E') { // si es un enroque
-            	sumaEnroques(movimiento, player, esFinal);
-            	/*
-            	 * x1,y1,x2,y2,E estructura del enroque
-            	 * */
-            	
-            	tableroPrueba[7][Character.getNumericValue(movimiento.charAt(1))] = " ";
-            	tableroPrueba[7][Character.getNumericValue(movimiento.charAt(3))] = "R";
-            	
-            	if(movimiento.charAt(3) == '6') { // si es enroque corto blanco
-            		tableroPrueba[7][7] = " ";
-                	tableroPrueba[7][5] = "T";
-            	} else if(movimiento.charAt(3) == '2'){ // si es enroque largo blanco
-            		tableroPrueba[7][0] = " ";
-                	tableroPrueba[7][3] = "T";
-            	} else if(movimiento.charAt(3) == '1') { // si es enroque corto negro
-            		tableroPrueba[7][0] = " ";
-                	tableroPrueba[7][2] = "T";
-            	} else { // si es enroque largo negro
-            		tableroPrueba[7][7] = " ";
-                	tableroPrueba[7][4] = "T";
-            	}
-            } else {
-                //column1,column2,piezacapturada,nuevapieza,P estructura de la coronacion 
-                //Se coloca la casilla del peon en blanco y la nueva casilla con la pieza a coronar
-                tableroPrueba[1][Character.getNumericValue(movimiento.charAt(0))] = " ";
-                tableroPrueba[0][Character.getNumericValue(movimiento.charAt(1))] = String.valueOf(movimiento.charAt(3));
-            }
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
     }
     
     public static void undoMove(String movimiento, int player){
