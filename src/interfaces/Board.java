@@ -1,6 +1,6 @@
 package interfaces;
 
-import components.Main;
+import components.AlphaBeta;
 import components.MoveGenerator;
 import components.MoveMaker;
 import utils.Utils;
@@ -64,7 +64,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for (int i = 0; i < 64; i++) {
             int k = -1 , j = k;
             
-            switch (Main.tableroPrueba[i / 8][i % 8]) {
+            switch (AlphaBeta.tableroPrueba[i / 8][i % 8]) {
                 case "p":
                     j = 5;
                     k = 1;
@@ -127,7 +127,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
        g.setColor(Color.BLACK);
        for (int i=0;i<8;i++) {
             for (int j=0;j<8;j++) {
-                if (!chessBoardAux[i][j].equals(Main.tableroPrueba[i][j])) {
+                if (!chessBoardAux[i][j].equals(AlphaBeta.tableroPrueba[i][j])) {
                     g.drawRoundRect(j*squareSize+10+3, i*squareSize+10+3, squareSize-6, squareSize-6, 10, 10);
                     g.drawRoundRect(j*squareSize+10+4, i*squareSize+10+4, squareSize-8, squareSize-8, 10, 10);
                 }
@@ -163,10 +163,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 String dragMove = ""; 
                 String movimientosPosibles = MoveGenerator.generaMovimientos(0);
                 //Si es un movimiento de peon y coronacion
-                if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(Main.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
-                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
+                if(newMouseY/squareSize == 0 && mouseY/squareSize == 1 && "P".equals(AlphaBeta.tableroPrueba[mouseY/squareSize][mouseX/squareSize])){
+                    dragMove = ""+(mouseX/squareSize)+(newMouseX/squareSize)+ AlphaBeta.tableroPrueba[(newMouseY/squareSize)][(newMouseX/squareSize)]+"DP";
                 } else{
-                    dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+Main.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
+                    dragMove = ""+(mouseY/squareSize)+(mouseX/squareSize)+(newMouseY/squareSize)+(newMouseX/squareSize)+ AlphaBeta.tableroPrueba[newMouseY/squareSize][newMouseX/squareSize];
                     if(movimientosPosibles.contains("E")) {
                 		System.out.println("Lista contiene enroque");
                 		int index = movimientosPosibles.indexOf("E");
@@ -186,15 +186,15 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     dialog.add(new JLabel("Espere..."));
                     MoveMaker.makeMove(dragMove, 0, true); // 0 para que cuando entre al metodo se transfome en 1 y coincida
                     copyBoard();
-                    Main.giraTablero();
+                    AlphaBeta.giraTablero();
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
                         protected Void doInBackground() throws Exception {
                             //labelEstado.setText("Pensando en las opciones:\n " + Main.generaMovimientos());
-                            movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
+                            movimientoFinal = AlphaBeta.alphaBeta(AlphaBeta.searchDepth, 1000000, -1000000, "", AlphaBeta.BLACK);
                             MoveMaker.makeMove(movimientoFinal, 1, true);
-                            Main.historial += 1;
+                            AlphaBeta.historial += 1;
                             return null;
                         }
                     };
@@ -202,7 +202,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     worker.addPropertyChangeListener((PropertyChangeEvent pce) -> {
                         if (pce.getPropertyName().equals("state")) {
                             if (pce.getNewValue() == SwingWorker.StateValue.DONE) {
-                                labelEstado.setText("Movimiento hecho: " + movimientoFinal.concat(" profundidad:" + Main.searchDepth));
+                                labelEstado.setText("Movimiento hecho: " + movimientoFinal.concat(" profundidad:" + AlphaBeta.searchDepth));
                                 dialog.dispose();
                             }
                         }
@@ -211,9 +211,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     worker.execute();
                     dialog.setVisible(true);
                     
-                    Main.giraTablero();
+                    AlphaBeta.giraTablero();
                     repaint();
-                    Utils.imprimirTablero(Main.tableroPrueba, 1, null);
+                    Utils.imprimirTablero(AlphaBeta.tableroPrueba, 1, null);
                 }
             }
         }
@@ -241,7 +241,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     
     public static void main(String[] args) {
         
-        Main.inicializaReyes();
+        AlphaBeta.inicializaReyes();
         JFrame frame = new JFrame();
         Board board = new Board();
         labelEstado = new JLabel(String.format("%20s", " "));
@@ -257,7 +257,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     
     private static void copyBoard(){
         for (int i=0;i<8;i++) {
-            System.arraycopy(Main.tableroPrueba[i], 0, chessBoardAux[i], 0, 8);
+            System.arraycopy(AlphaBeta.tableroPrueba[i], 0, chessBoardAux[i], 0, 8);
         }
     }
 }

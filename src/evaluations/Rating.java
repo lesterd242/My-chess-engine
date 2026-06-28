@@ -1,6 +1,6 @@
 package evaluations;
 
-import components.Main;
+import components.AlphaBeta;
 import components.MoveGenerator;
 
 public class Rating {
@@ -90,13 +90,13 @@ public class Rating {
         counter += checkStaleMate(list, depth);
         counter += rateMoveability(list);
         counter += ratePositional(material, player);
-        Main.giraTablero();
+        AlphaBeta.giraTablero();
         counter -= rateAttack();
         material = rateMaterial();
         counter -= material;
         counter -= rateMoveability(MoveGenerator.generaMovimientos(1-player).length());
         counter -= ratePositional(material, 1-player);
-        Main.giraTablero();
+        AlphaBeta.giraTablero();
         if (player == 1) {//BETA para ALFA
             counter += rateFirstMoves();
             return (counter + depth * 50);
@@ -114,7 +114,7 @@ public class Rating {
         int counter = 0;
         
         for (int i = 0; i < 64; i++) {
-            switch (Main.tableroPrueba[i / 8][i % 8]) {
+            switch (AlphaBeta.tableroPrueba[i / 8][i % 8]) {
                 case "P":
                     counter += 100;
                     break;
@@ -159,7 +159,7 @@ public class Rating {
         int counter = 0;
         
         for (int i = 0; i < 64; i++) {
-            switch(Main.tableroPrueba[i/8][i%8]){
+            switch(AlphaBeta.tableroPrueba[i/8][i%8]){
                 case "P":
                     counter += PAWNBOARD[i/8][i%8];
                     break;
@@ -183,11 +183,11 @@ public class Rating {
                     }
                     
                     if(player == 0) {
-                    	if (Main.contadorReyes[0] > 180) {
+                    	if (AlphaBeta.contadorReyes[0] > 180) {
                     		counter += 30;
                     	}
                     } else {
-                    	if (Main.contadorReyes[1] > 180) {
+                    	if (AlphaBeta.contadorReyes[1] > 180) {
                     		counter += 30;
                     	}
                     }
@@ -201,8 +201,8 @@ public class Rating {
     
     private static int rateFirstMoves(){
         int counter = 0;
-        if (Main.historial < 5) {
-            switch (Main.piezaOrigen) {
+        if (AlphaBeta.historial < 5) {
+            switch (AlphaBeta.piezaOrigen) {
                 case "D":
                     counter = -150;
                 break;

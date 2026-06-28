@@ -19,12 +19,12 @@ public class Pruebas {
 		JTextField field = new JTextField();
 		button.addActionListener((e) -> {
 			MoveMaker.makeMove(field.getText() + " ", 0, true);
-			Utils.imprimirTablero(Main.tableroPrueba, 0, null);
-			Main.giraTablero();
-			String movimientoFinal = Main.alphaBeta(Main.searchDepth, 1000000, -1000000, "", Main.BLACK);
+			Utils.imprimirTablero(AlphaBeta.tableroPrueba, 0, null);
+			AlphaBeta.giraTablero();
+			String movimientoFinal = AlphaBeta.alphaBeta(AlphaBeta.searchDepth, 1000000, -1000000, "", AlphaBeta.BLACK);
 			MoveMaker.makeMove(movimientoFinal, 1, true);
-			Main.giraTablero();
-			Utils.imprimirTablero(Main.tableroPrueba, 0, movimientoFinal);
+			AlphaBeta.giraTablero();
+			Utils.imprimirTablero(AlphaBeta.tableroPrueba, 0, movimientoFinal);
 		});
 		
 		frame.add(field, BorderLayout.NORTH);
@@ -37,8 +37,8 @@ public class Pruebas {
 	}
 	
 	public static void setEnviroment() {
-		Main.inicializaReyes();
-		Utils.imprimirTablero(Main.tableroPrueba, 0, null);
+		AlphaBeta.inicializaReyes();
+		Utils.imprimirTablero(AlphaBeta.tableroPrueba, 0, null);
 		window();
 	}
 	

@@ -1,7 +1,7 @@
 package components;
 
-import static components.Main.posicionReyB;
-import static components.Main.tableroPrueba;
+import static components.AlphaBeta.posicionReyB;
+import static components.AlphaBeta.tableroPrueba;
 
 public class MoveMaker {
 
